@@ -1,21 +1,28 @@
 package bujii.be.controller;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import org.apache.catalina.User;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import bujii.be.domain.dto.LoginDto;
+import bujii.be.domain.dto.LoginViewDto;
+import bujii.be.domain.dto.UserCreateDto;
+import bujii.be.service.UserService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
-import java.util.List;
-
+@CrossOrigin
 @RestController
 @RequestMapping("/users")
-@Tag(name = "User API", description = "Operations related to users")
+@RequiredArgsConstructor
 public class UserController {
-    @GetMapping("/")
-    public List<String> getUsers(){
-        return Arrays.asList("Ion", "Ana");
+    private final UserService userService;
+
+    @PostMapping("/login")
+    public LoginViewDto login(@RequestBody LoginDto loginDto) {
+        return userService.login(loginDto);
+    }
+
+    @PostMapping("/register")
+    @ResponseStatus(HttpStatus.OK)
+    public void register(@RequestBody UserCreateDto userCreateDto) {
+        userService.register(userCreateDto);
     }
 }

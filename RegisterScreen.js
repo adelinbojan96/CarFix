@@ -1,7 +1,48 @@
+import { useState } from 'react';
 import React from 'react';
+import axios from 'axios';
+import Toast from 'react-native-toast-message';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, TouchableWithoutFeedback } from 'react-native';
 
 export default function RegisterScreen({ navigation }) {
+
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+
+  const handleSignUp = () => {
+    if(password !== confirmPassword)
+    {
+      Toast.show({
+        type: 'error',
+        text1: 'Password Mismatch',
+        text2: 'Confirm Password does not match with the password.',
+      });
+    }else{
+      axios.post('http://localhost:8082/users/register', {
+        username: username,
+        email: email,
+        password: password,
+      })
+      .then(response => {
+        Toast.show({
+          type: 'success',
+          text1: 'Sign Up Successful',
+          text2: 'Welcome aboard!',
+        });
+        navigation.navigate('Login')
+      })
+      .catch(error => {
+        Toast.show({
+          type: 'error',
+          text1: 'Sign up failed. Please try again.',
+          text2: error.message,
+        });
+      });
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.registerText}>REGISTER</Text>
@@ -10,12 +51,16 @@ export default function RegisterScreen({ navigation }) {
         style={styles.input}
         placeholder="Username"
         placeholderTextColor="#E3D9CC"
+        value={username}
+        onChangeText={setUsername}
       />
 
       <TextInput
         style={styles.input}
         placeholder="Email"
         placeholderTextColor="#E3D9CC"
+        value={email}
+        onChangeText={setEmail}
       />
       
       <TextInput
@@ -23,6 +68,8 @@ export default function RegisterScreen({ navigation }) {
         placeholder="Password"
         placeholderTextColor="#E3D9CC"
         secureTextEntry={true}
+        value={password}
+        onChangeText={setPassword}
       />
 
       <TextInput
@@ -30,9 +77,11 @@ export default function RegisterScreen({ navigation }) {
         placeholder="Confirm Password"
         placeholderTextColor="#E3D9CC"
         secureTextEntry={true}
+        value={confirmPassword}
+        onChangeText={setConfirmPassword}
       />
 
-      <TouchableOpacity style={styles.button}>
+      <TouchableOpacity style={styles.button} onPress={handleSignUp}>
         <Text style={styles.buttonText}>Sign up</Text>
       </TouchableOpacity>
 

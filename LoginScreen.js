@@ -1,7 +1,36 @@
-import React from 'react';
+import React, { useState } from 'react';
+import axios from 'axios';
+import Toast from 'react-native-toast-message';
+import { Alert } from 'react-native';
 import { View, Text, TextInput, StyleSheet, Image, TouchableWithoutFeedback, TouchableOpacity } from 'react-native';
 
 export default function LoginScreen({ navigation }) {
+
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleLogin = () => {
+    axios.post('http://localhost:8082/users/login', {
+      username: username,
+      password: password,
+    })
+    .then(response => {
+      Toast.show({
+        type: 'success',
+        text1: 'Login Successful',
+        text2: response.body.jwt,
+      });
+    })
+    .catch(error => {
+      const errorMessage = error.response?.data?.message || error.message || 'An unexpected error occurred';
+      Toast.show({
+        type: 'error',
+        text1: 'Login failed. Please try again.',
+        text2: errorMessage,
+      });
+    });
+  }
+
   return (
     <View style={styles.container}>
       <Text style={styles.loginText}>LOGIN</Text>
@@ -10,6 +39,8 @@ export default function LoginScreen({ navigation }) {
         style={styles.input}
         placeholder="Username"
         placeholderTextColor="#E3D9CC"
+        value={username}
+        onChangeText={setUsername}
       />
       
       <TextInput
@@ -17,9 +48,11 @@ export default function LoginScreen({ navigation }) {
         placeholder="Password"
         placeholderTextColor="#E3D9CC"
         secureTextEntry={true}
+        value={password}
+        onChangeText={setPassword}
       />
       
-      <TouchableOpacity style={styles.button}>
+      <TouchableOpacity style={styles.button} onPress={handleLogin}>
         <Text style={styles.buttonText}>Login</Text>
       </TouchableOpacity>
 
