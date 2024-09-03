@@ -9,5 +9,4 @@ public class BujiiBeApplication {
     public static void main(String[] args) {
         SpringApplication.run(BujiiBeApplication.class, args);
     }
-
 }

@@ -6,6 +6,7 @@ import org.hibernate.type.descriptor.java.BlobJavaType;
 
 import java.sql.Blob;
 import java.sql.Date;
+import java.sql.Timestamp;
 
 @Entity
 @Table(name = "users")
@@ -16,7 +17,8 @@ import java.sql.Date;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_seq_gen")
+    @SequenceGenerator(name = "user_seq_gen", sequenceName = "user_id_seq", allocationSize = 1)
     @Column
     Integer id;
 
@@ -33,8 +35,8 @@ public class User {
     String role;
 
     @Column
-    Date created_at;
+    Timestamp created_at;
 
     @Column
-    BlobJavaType picture;
+    byte[] picture;
 }

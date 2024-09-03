@@ -9,8 +9,8 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.sql.Date;
-import java.time.LocalDate;
+import java.sql.Timestamp;
+import java.time.Instant;
 
 @Component
 @RequiredArgsConstructor
@@ -29,7 +29,7 @@ public class UserDaoImpl implements UserDao {
     public void register(UserCreateDto userCreateDto) {
         User user = userMapper.toEntity(userCreateDto);
         user.setRole("Buyer");
-        user.setCreated_at(Date.valueOf(LocalDate.now()));
+        user.setCreated_at(Timestamp.from(Instant.now()));
 
         userRepository.save(user);
     }

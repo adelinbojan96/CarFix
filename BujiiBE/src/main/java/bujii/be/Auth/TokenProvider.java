@@ -1,6 +1,5 @@
 package bujii.be.Auth;
 
-
 import bujii.be.domain.model.User;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
