@@ -21,7 +21,7 @@ const MainPage = ({ navigation }) => {
       ),
       headerStyle: {
         backgroundColor: '#a6b2b9', 
-        height: 100, 
+        height: 150,  // Keep the larger header height
       },
     });
   }, [navigation]);
@@ -38,14 +38,14 @@ const MainPage = ({ navigation }) => {
       <View style={styles.boxContainer}>
         <View style={styles.brandBox}>
           <Image 
-            source={{ uri: './assets/audi.png' }} 
+            source={require('./assets/audi.png')} 
             style={styles.brandImage}
           />
           <Text style={styles.brandText}>Audi</Text>
         </View>
         <View style={styles.brandBox}>
           <Image 
-            source={{ uri: './assets/mercedes.png' }} 
+            source={require('./assets/mercedes.png')} 
             style={styles.brandImage}
           />
           <Text style={styles.brandText}>Mercedes</Text>
@@ -70,6 +70,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     alignSelf: 'flex-start',
     marginBottom: 10,
+    paddingLeft: 10,
   },
   underline: {
     borderBottomColor: '#000',
@@ -85,7 +86,7 @@ const styles = StyleSheet.create({
   brandBox: {
     backgroundColor: '#d0d8db', 
     borderRadius: 10, 
-    width: '48%', 
+    width: '45%', 
     aspectRatio: 1, 
     alignItems: 'center', 
     justifyContent: 'center',
@@ -97,8 +98,8 @@ const styles = StyleSheet.create({
     elevation: 5, 
   },
   brandImage: {
-    width: 50, 
-    height: 50,
+    width: 70, 
+    height: 70,
     marginBottom: 10, 
   },
   brandText: {
@@ -107,15 +108,20 @@ const styles = StyleSheet.create({
     color: '#000',
   },
   searchIcon: {
-    width: 40,
-    height: 40,
-    marginLeft: 20,
+    width: 35,
+    height: 35,
+    marginLeft: 15,
   },
   avatar: {
-    width: 75,
-    height: 75,
-    borderRadius: 25,
-    marginRight: 20,
+    width: 55,
+    height: 55,
+    borderRadius: 37.5, 
+    marginRight: 5,
+    borderWidth: 2,
+    borderColor: '#000',
+    position: 'absolute',
+    top: -35,
+    right: 5,
   },
 });
 

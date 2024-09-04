@@ -50,8 +50,18 @@ export default function App() {
         <Stack.Screen 
           name="MainPage" 
           component={MainPage} 
-          options={{ headerTitle: '',
-          headerLeft: null  }} 
+          options={{ 
+            headerTitle: 'Hello, Sir Alex',
+            headerTitleAlign: 'center',
+            headerStyle: {
+              backgroundColor: '#a6b2b9',
+              height: 260, // Adjust the height here
+            },
+            headerTitleStyle: {
+              fontSize: 24, // Adjust the font size if needed
+            },
+            headerLeft: null,
+          }} 
         />
       </Stack.Navigator>
     </NavigationContainer>
