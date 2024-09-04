@@ -10,7 +10,7 @@ export default function LoginScreen({ navigation }) {
   const [password, setPassword] = useState('');
 
   const handleLogin = () => {
-  axios.post('http://localhost:8082/users/login', {
+  axios.post('https://carfix-production.up.railway.app/users/login', {
     username: username,
     password: password,
   })
