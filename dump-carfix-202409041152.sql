@@ -5,7 +5,7 @@
 -- Dumped from database version 16.4
 -- Dumped by pg_dump version 16.4
 
--- Started on 2024-08-28 23:40:15
+-- Started on 2024-09-04 11:52:59
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -29,7 +29,7 @@ CREATE SCHEMA public;
 ALTER SCHEMA public OWNER TO pg_database_owner;
 
 --
--- TOC entry 4861 (class 0 OID 0)
+-- TOC entry 4863 (class 0 OID 0)
 -- Dependencies: 4
 -- Name: SCHEMA public; Type: COMMENT; Schema: -; Owner: pg_database_owner
 --
@@ -118,6 +118,21 @@ CREATE TABLE public.sellers (
 ALTER TABLE public.sellers OWNER TO postgres;
 
 --
+-- TOC entry 221 (class 1259 OID 24595)
+-- Name: user_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.user_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.user_id_seq OWNER TO postgres;
+
+--
 -- TOC entry 215 (class 1259 OID 16404)
 -- Name: users; Type: TABLE; Schema: public; Owner: postgres
 --
@@ -136,7 +151,7 @@ CREATE TABLE public.users (
 ALTER TABLE public.users OWNER TO postgres;
 
 --
--- TOC entry 4855 (class 0 OID 16427)
+-- TOC entry 4856 (class 0 OID 16427)
 -- Dependencies: 220
 -- Data for Name: buyers; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -144,7 +159,7 @@ ALTER TABLE public.users OWNER TO postgres;
 
 
 --
--- TOC entry 4852 (class 0 OID 16414)
+-- TOC entry 4853 (class 0 OID 16414)
 -- Dependencies: 217
 -- Data for Name: firm; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -152,7 +167,7 @@ ALTER TABLE public.users OWNER TO postgres;
 
 
 --
--- TOC entry 4853 (class 0 OID 16419)
+-- TOC entry 4854 (class 0 OID 16419)
 -- Dependencies: 218
 -- Data for Name: messages; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -160,7 +175,7 @@ ALTER TABLE public.users OWNER TO postgres;
 
 
 --
--- TOC entry 4851 (class 0 OID 16409)
+-- TOC entry 4852 (class 0 OID 16409)
 -- Dependencies: 216
 -- Data for Name: product; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -168,7 +183,7 @@ ALTER TABLE public.users OWNER TO postgres;
 
 
 --
--- TOC entry 4854 (class 0 OID 16424)
+-- TOC entry 4855 (class 0 OID 16424)
 -- Dependencies: 219
 -- Data for Name: sellers; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -176,14 +191,26 @@ ALTER TABLE public.users OWNER TO postgres;
 
 
 --
--- TOC entry 4850 (class 0 OID 16404)
+-- TOC entry 4851 (class 0 OID 16404)
 -- Dependencies: 215
 -- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
+INSERT INTO public.users VALUES (1, 'adelinbojan', '$2a$10$JxZfFxxyLYISh3jzsxXQxu8U90MMFfZcYtEpsBfN1SrKo5KwO0T2a', 'adelinbojan96@gmail.com', 'Buyer', '2024-09-03 15:33:39.557145', NULL);
+INSERT INTO public.users VALUES (2, 'adelinutz', '$2a$10$RgpDmIpa4hdbnKv8EhFd5.4MacTyc0Hn16z1php6d9ZkQORkF7L/y', 'adelinbojan96@gmail.com', 'Buyer', '2024-09-03 15:35:16.247359', NULL);
+INSERT INTO public.users VALUES (3, 'idk', '$2a$10$j0n2RoGd5UcsXyl1fQAzTe1PmvgCTkY0TnGKjw7txUlKsywKBKwI2', 'idk', 'Buyer', '2024-09-04 09:09:37.574695', NULL);
 
 
--- Completed on 2024-08-28 23:40:15
+--
+-- TOC entry 4864 (class 0 OID 0)
+-- Dependencies: 221
+-- Name: user_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.user_id_seq', 3, true);
+
+
+-- Completed on 2024-09-04 11:52:59
 
 --
 -- PostgreSQL database dump complete

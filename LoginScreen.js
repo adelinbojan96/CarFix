@@ -10,26 +10,31 @@ export default function LoginScreen({ navigation }) {
   const [password, setPassword] = useState('');
 
   const handleLogin = () => {
-    axios.post('http://localhost:8082/users/login', {
-      username: username,
-      password: password,
-    })
-    .then(response => {
-      Toast.show({
-        type: 'success',
-        text1: 'Login Successful',
-        text2: response.body.jwt,
-      });
-    })
-    .catch(error => {
-      const errorMessage = error.response?.data?.message || error.message || 'An unexpected error occurred';
-      Toast.show({
-        type: 'error',
-        text1: 'Login failed. Please try again.',
-        text2: errorMessage,
-      });
+  axios.post('http://localhost:8082/users/login', {
+    username: username,
+    password: password,
+  })
+  .then(response => {
+    const token = response.data.jwt;
+
+    Toast.show({
+      type: 'success',
+      text1: 'Login Successful',
+      text2: `JWT: ${token}`,
     });
-  }
+
+    navigation.navigate('MainPage');
+  })
+  .catch(error => {
+    const errorMessage = error.response?.data?.message || error.message || 'An unexpected error occurred';
+    Toast.show({
+      type: 'error',
+      text1: 'Login failed. Please try again.',
+      text2: errorMessage,
+    });
+  });
+};
+
 
   return (
     <View style={styles.container}>
