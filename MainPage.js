@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react';
-import { View, Text, Image, StyleSheet } from 'react-native';
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import { View, Text, Image, StyleSheet, ScrollView } from 'react-native';
 
 const MainPage = ({ navigation }) => {
-
   useEffect(() => {
     navigation.setOptions({
       headerTitle: 'Hello, Sir Alex', 
@@ -26,8 +26,21 @@ const MainPage = ({ navigation }) => {
     });
   }, [navigation]);
 
+  const [firms, setFirms] = useState(null);
+
+  const renderFirms  = () => {
+    axios.get("https://carfix-production.up.railway.app/firms")
+    .then(response =>{
+      setFirms(response.data);
+    })
+  };
+
+  useEffect(() => {
+    renderFirms()
+  },[]);
+
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       {/* Brands text */}
       <View style={styles.titleContainer}>
         <Text style={styles.title}>Brands</Text>
@@ -36,28 +49,30 @@ const MainPage = ({ navigation }) => {
       
       {/* Container for brand boxes */}
       <View style={styles.boxContainer}>
-        <View style={styles.brandBox}>
-          <Image 
-            source={require('./assets/audi.png')} 
-            style={styles.brandImage}
-          />
-          <Text style={styles.brandText}>Audi</Text>
-        </View>
-        <View style={styles.brandBox}>
-          <Image 
-            source={require('./assets/mercedes.png')} 
-            style={styles.brandImage}
-          />
-          <Text style={styles.brandText}>Mercedes</Text>
-        </View>
+        {!firms ? (
+          <Text>Loading...</Text> // Or use an ActivityIndicator
+        ) : (
+          firms.map((element, index) => {
+            const base64Image = `data:image/png;base64,${element.image}`;
+            return (
+              <View key={index} style={styles.brandBox}>
+                <Image 
+                  source={{ uri: base64Image }} 
+                  style={styles.brandImage}
+                />
+                <Text style={styles.brandText}>{element.name}</Text>
+              </View>
+            );
+          })
+        )}
       </View>
-    </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     padding: 16, 
     backgroundColor: '#f0f0f0',
   },
