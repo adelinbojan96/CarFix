@@ -13,7 +13,7 @@ export default function LoginScreen({ navigation }) {
   axios.post('https://carfix-production.up.railway.app/users/login', {
     username: username,
     password: password,
-  })
+  },{withCredentials: true})
   .then(response => {
     const token = response.data.jwt;
 
