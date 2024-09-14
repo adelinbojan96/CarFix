@@ -21,49 +21,62 @@ const MainPage = ({ navigation }) => {
       ),
       headerStyle: {
         backgroundColor: '#a6b2b9', 
-        height: 150,  // Keep the larger header height
+        height: 150,  
       },
     });
   }, [navigation]);
 
   const [firms, setFirms] = useState(null);
 
-  const renderFirms  = () => {
+  const renderFirms = () => {
     axios.get("https://carfix-production.up.railway.app/firms")
-    .then(response =>{
-      setFirms(response.data);
-    })
+      .then(response => {
+        console.error("Full API Response:", response);  // Log the full API response for debugging
+        console.log("Data from API:", response.data);  // Log what the `response.data` looks like
+
+        // Check if response.data is an array
+        if (Array.isArray(response.data)) {
+          setFirms(response.data);
+        } else {
+          console.error("Expected an array, but got something else:", response.data);
+        }
+      })
+      .catch(error => {
+        console.error("Error fetching firms:", error);
+      });
   };
 
   useEffect(() => {
-    renderFirms()
-  },[]);
+    renderFirms();
+  }, []);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      {/* Brands text */}
       <View style={styles.titleContainer}>
         <Text style={styles.title}>Brands</Text>
         <View style={styles.underline} />
       </View>
       
-      {/* Container for brand boxes */}
       <View style={styles.boxContainer}>
         {!firms ? (
-          <Text>Loading...</Text> // Or use an ActivityIndicator
+          <Text>Loading...</Text>
         ) : (
-          firms.map((element, index) => {
-            const base64Image = `data:image/png;base64,${element.image}`;
-            return (
-              <View key={index} style={styles.brandBox}>
-                <Image 
-                  source={{ uri: base64Image }} 
-                  style={styles.brandImage}
-                />
-                <Text style={styles.brandText}>{element.name}</Text>
-              </View>
-            );
-          })
+          Array.isArray(firms) && firms.length > 0 ? (
+            firms.map((element, index) => {
+              const base64Image = `data:image/png;base64,${element.image}`;
+              return (
+                <View key={index} style={styles.brandBox}>
+                  <Image 
+                    source={{ uri: base64Image }} 
+                    style={styles.brandImage}
+                  />
+                  <Text style={styles.brandText}>{element.name}</Text>
+                </View>
+              );
+            })
+          ) : (
+            <Text>No firms found</Text>  // Fallback in case the array is empty or firms is not an array
+          )
         )}
       </View>
     </ScrollView>

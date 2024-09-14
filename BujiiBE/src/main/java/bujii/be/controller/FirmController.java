@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/firms")
+@RequestMapping("/brands")
 @RequiredArgsConstructor
 public class FirmController {
     private final FirmService firmService;
