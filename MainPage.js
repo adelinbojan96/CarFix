@@ -29,7 +29,7 @@ const MainPage = ({ navigation }) => {
   const [firms, setFirms] = useState(null);
 
   const renderFirms = () => {
-    axios.get("https://carfix-production.up.railway.app/firms")
+    axios.get("https://carfix-production.up.railway.app/api/brands")
       .then(response => {
         console.error("Full API Response:", response);  // Log the full API response for debugging
         console.log("Data from API:", response.data);  // Log what the `response.data` looks like
