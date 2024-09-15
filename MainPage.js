@@ -1,64 +1,74 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { View, Text, Image, StyleSheet, ScrollView } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const MainPage = ({ navigation }) => {
+  const [firms, setFirms] = useState(null);
+
   useEffect(() => {
     navigation.setOptions({
-      headerTitle: 'Hello, Sir Alex', 
+      headerTitle: 'Hello, Sir Alex',
       headerTitleAlign: 'center',
       headerLeft: () => (
-        <Image 
-          source={require('./assets/search.png')} 
+        <Image
+          source={require('./assets/search.png')}
           style={styles.searchIcon}
         />
       ),
       headerRight: () => (
-        <Image 
-          source={require('./assets/sir_alex.png')} 
+        <Image
+          source={require('./assets/sir_alex.png')}
           style={styles.avatar}
         />
       ),
       headerStyle: {
-        backgroundColor: '#a6b2b9', 
-        height: 150,  
+        backgroundColor: '#a6b2b9',
+        height: 150,
       },
     });
   }, [navigation]);
 
-  const [firms, setFirms] = useState(null);
+  const renderFirms = async () => {
+    try {
+      const authToken = await AsyncStorage.getItem('authToken'); // Retrieve token from AsyncStorage
 
-  // Placeholder for your token. You may get this dynamically (e.g., from login or environment variables).
-  const authToken = "your-authentication-token";  // Replace with your actual token
-
-  const renderFirms = () => {
-    axios.get("https://carfix-production.up.railway.app/api/brands", {
-      headers: {
-        'Accept': 'application/json',         // Expect JSON response
-        'Authorization': `Bearer ${authToken}`  // Add the token in the Authorization header
+      if (!authToken) {
+        console.error('No auth token found. Redirecting to login.');
+        navigation.navigate('Login'); // Redirect to login if token is missing
+        return;
       }
-    })
-    .then(response => {
-      console.log("Full Response:", response);
-      console.log("Status Code:", response.status);  // Log the status code
-      console.log("Content-Type:", response.headers['content-type']);  // Log content-type
 
-      // Check if the response is a valid JSON
-      if (response.status === 200 && response.headers['content-type'].includes('application/json')) {
-        console.log("Data from API:", response.data);  // Log the JSON data
-        if (Array.isArray(response.data)) {
-          setFirms(response.data);
-        } else {
-          console.error("Expected an array, but got something else:", response.data);
-        }
-      } else {
-        console.error("Unexpected content type or status code:", response.status, response.headers['content-type']);
-        console.log("HTML Response Body:", response.data);  // Log the HTML content if not JSON
-      }
-    })
-    .catch(error => {
-      console.error("Error fetching firms:", error);
-    });
+      axios.get('https://carfix-production.up.railway.app/api/brands', {
+        headers: {
+          Accept: 'application/json', // Expect JSON response
+          Authorization: `Bearer ${authToken}`, // Use token from AsyncStorage
+        },
+      })
+        .then(response => {
+          console.log('Full Response:', response);
+          console.log('Status Code:', response.status); // Log the status code
+          console.log('Content-Type:', response.headers['content-type']); // Log content-type
+
+          // Check if the response is a valid JSON
+          if (response.status === 200 && response.headers['content-type'].includes('application/json')) {
+            console.log('Data from API:', response.data); // Log the JSON data
+            if (Array.isArray(response.data)) {
+              setFirms(response.data);
+            } else {
+              console.error('Expected an array, but got something else:', response.data);
+            }
+          } else {
+            console.error('Unexpected content type or status code:', response.status, response.headers['content-type']);
+            console.log('HTML Response Body:', response.data); // Log the HTML content if not JSON
+          }
+        })
+        .catch(error => {
+          console.error('Error fetching firms:', error);
+        });
+    } catch (error) {
+      console.error('Error retrieving auth token:', error);
+    }
   };
 
   useEffect(() => {
@@ -71,7 +81,7 @@ const MainPage = ({ navigation }) => {
         <Text style={styles.title}>Brands</Text>
         <View style={styles.underline} />
       </View>
-      
+
       <View style={styles.boxContainer}>
         {!firms ? (
           <Text>Loading...</Text>
@@ -81,8 +91,8 @@ const MainPage = ({ navigation }) => {
               const base64Image = `data:image/png;base64,${element.image}`;
               return (
                 <View key={index} style={styles.brandBox}>
-                  <Image 
-                    source={{ uri: base64Image }} 
+                  <Image
+                    source={{ uri: base64Image }}
                     style={styles.brandImage}
                   />
                   <Text style={styles.brandText}>{element.name}</Text>
@@ -90,7 +100,7 @@ const MainPage = ({ navigation }) => {
               );
             })
           ) : (
-            <Text>No firms found</Text>  // Fallback if the array is empty
+            <Text>No firms found</Text> // Fallback if the array is empty
           )
         )}
       </View>
@@ -101,12 +111,12 @@ const MainPage = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    padding: 16, 
+    padding: 16,
     backgroundColor: '#f0f0f0',
   },
   titleContainer: {
-    alignSelf: 'stretch', 
-    marginTop: 20, 
+    alignSelf: 'stretch',
+    marginTop: 20,
   },
   title: {
     fontSize: 24,
@@ -117,33 +127,33 @@ const styles = StyleSheet.create({
   },
   underline: {
     borderBottomColor: '#000',
-    borderBottomWidth: 2, 
-    width: '100%', 
+    borderBottomWidth: 2,
+    width: '100%',
   },
   boxContainer: {
-    flexDirection: 'row', 
-    flexWrap: 'wrap',     
+    flexDirection: 'row',
+    flexWrap: 'wrap',
     justifyContent: 'space-between',
-    marginTop: 20,       
+    marginTop: 20,
   },
   brandBox: {
-    backgroundColor: '#d0d8db', 
-    borderRadius: 10, 
-    width: '45%', 
-    aspectRatio: 1, 
-    alignItems: 'center', 
+    backgroundColor: '#d0d8db',
+    borderRadius: 10,
+    width: '45%',
+    aspectRatio: 1,
+    alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 20, 
-    shadowColor: '#000', 
+    marginBottom: 20,
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3, 
-    shadowRadius: 5, 
-    elevation: 5, 
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    elevation: 5,
   },
   brandImage: {
-    width: 70, 
+    width: 70,
     height: 70,
-    marginBottom: 10, 
+    marginBottom: 10,
   },
   brandText: {
     fontSize: 16,
@@ -158,7 +168,7 @@ const styles = StyleSheet.create({
   avatar: {
     width: 55,
     height: 55,
-    borderRadius: 37.5, 
+    borderRadius: 37.5,
     marginRight: 5,
     borderWidth: 2,
     borderColor: '#000',
