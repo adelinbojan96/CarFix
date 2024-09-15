@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import Toast from 'react-native-toast-message';
+import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
 import { Alert } from 'react-native';
 import { View, Text, TextInput, StyleSheet, Image, TouchableWithoutFeedback, TouchableOpacity } from 'react-native';
 
@@ -9,32 +10,36 @@ export default function LoginScreen({ navigation }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleLogin = () => {
-  axios.post('https://carfix-production.up.railway.app/users/login', {
-    username: username,
-    password: password,
-  })
-  .then(response => {
-    const token = response.data.jwt;
+  const handleLogin = async () => {
+    try {
+      const response = await axios.post('https://carfix-production.up.railway.app/users/login', {
+        username: username,
+        password: password,
+      });
 
-    Toast.show({
-      type: 'success',
-      text1: 'Login Successful',
-      text2: `JWT: ${token}`,
-    });
+      const token = response.data.jwt; // Extract JWT token
 
-    navigation.navigate('MainPage');
-  })
-  .catch(error => {
-    const errorMessage = error.response?.data?.message || error.message || 'An unexpected error occurred';
-    Toast.show({
-      type: 'error',
-      text1: 'Login failed. Please try again.',
-      text2: errorMessage,
-    });
-  });
-};
+      // Save the token in AsyncStorage
+      await AsyncStorage.setItem('authToken', token);
 
+      Toast.show({
+        type: 'success',
+        text1: 'Login Successful',
+        text2: `JWT: ${token}`,
+      });
+
+      // Navigate to the main page after successful login
+      navigation.navigate('MainPage');
+      
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || error.message || 'An unexpected error occurred';
+      Toast.show({
+        type: 'error',
+        text1: 'Login failed. Please try again.',
+        text2: errorMessage,
+      });
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -75,7 +80,6 @@ export default function LoginScreen({ navigation }) {
           <Text style={styles.signupText}>Sign up here</Text>
         </View>
       </TouchableWithoutFeedback>
-
     </View>
   );
 }
