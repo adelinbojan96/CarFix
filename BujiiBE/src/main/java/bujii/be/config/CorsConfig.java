@@ -12,10 +12,10 @@ public class CorsConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")  // Apply to all routes
-                .allowedOrigins("*")  // Allow all origins
+                .allowedOrigins("http://localhost:8081", "https://x33rw4q-anonymous-8081.exp.direct", "http://localhost:8080", "https://x33rw4q-anonymous-8081.exp.direct")  // Allow requests from these origins
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")  // Allow these HTTP methods
-                .allowedHeaders("Content-Type", "Authorization", "Accept", "X-Requested-With")  // Explicitly allow these headers
-                .exposedHeaders("Access-Control-Allow-Origin", "Authorization")  // Expose Authorization in responses
-                .allowCredentials(false);  // Ensure credentials are disabled since you're allowing all origins
+                .allowedHeaders("*")  // Allow all headers
+                .exposedHeaders("Authorization")  // Expose Authorization headers if necessary
+                .allowCredentials(true);  // Allow credentials (JWT tokens, cookies, etc.)
     }
 }

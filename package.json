@@ -12,6 +12,7 @@
     "@expo-google-fonts/tapestry": "^0.2.3",
     "@expo-google-fonts/taviraj": "^0.2.3",
     "@expo/metro-runtime": "~3.2.3",
+    "@react-native-async-storage/async-storage": "1.23.1",
     "@react-navigation/native": "^6.1.18",
     "@react-navigation/native-stack": "^6.11.0",
     "axios": "^1.7.7",
