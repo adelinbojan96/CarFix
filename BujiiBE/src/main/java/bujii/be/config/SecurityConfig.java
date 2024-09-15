@@ -1,11 +1,7 @@
 package bujii.be.config;
 
-import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -13,62 +9,54 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
 
+import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
-@AllArgsConstructor
 public class SecurityConfig {
 
     @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        return httpSecurity
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .csrf(AbstractHttpConfigurer::disable)
-                .csrf(AbstractHttpConfigurer::disable)
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-//                .authorizeHttpRequests(authorize -> authorize
-//                        .requestMatchers(HttpMethod.POST, "/user/register").permitAll()
-//                        .requestMatchers(HttpMethod.POST, "/user/login").permitAll()
-//                        .requestMatchers(HttpMethod.POST, "/user/forgotPassword").permitAll()
-//                        .requestMatchers(HttpMethod.POST, "/user/resetPassword/**").permitAll()
-//                        .requestMatchers(HttpMethod.GET, "/user/validate").permitAll()
-//                        .requestMatchers(HttpMethod.GET, "/user/validateToken").permitAll()
-//                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
-//                        .requestMatchers(HttpMethod.POST, "/albums").hasAuthority(Roles.ADMIN.getAuthority())
-//                        .requestMatchers(HttpMethod.PUT, "/albums/*").hasAuthority(Roles.ADMIN.getAuthority())
-//                        .requestMatchers(HttpMethod.DELETE, "/albums/*").hasAuthority(Roles.ADMIN.getAuthority())
-//                        .requestMatchers(HttpMethod.POST, "/artists").hasAuthority(Roles.ADMIN.getAuthority())
-//                        .requestMatchers(HttpMethod.PUT, "/artists/*").hasAuthority(Roles.ADMIN.getAuthority())
-//                        .requestMatchers(HttpMethod.DELETE, "/artists/*").hasAuthority(Roles.ADMIN.getAuthority())
-//                        .requestMatchers(HttpMethod.POST, "/songs").hasAuthority(Roles.ADMIN.getAuthority())
-//                        .requestMatchers(HttpMethod.PUT, "/songs/*").hasAuthority(Roles.ADMIN.getAuthority())
-//                        .requestMatchers(HttpMethod.DELETE, "/songs/*").hasAuthority(Roles.ADMIN.getAuthority())
-//                        .anyRequest().authenticated())
-//                .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
+    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        return http
+                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Apply CORS settings
+                .csrf(AbstractHttpConfigurer::disable) // Disable CSRF
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Use
+                                                                                                              // stateless
+                                                                                                              // sessions
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/users/login", "/users/register", "/api/brands").permitAll() // Allow access
+                                                                                                       // to certain
+                                                                                                       // endpoints
+                        .anyRequest().authenticated()) // All other endpoints require authentication
                 .build();
     }
+
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin("http://localhost:8081");
-        configuration.addAllowedMethod("*");
-        configuration.addAllowedHeader("*");
-        configuration.setAllowCredentials(true);
+        configuration.setAllowedOrigins(Arrays.asList(
+                "http://localhost:8081", // Allow localhost during development
+                "https://x33rw4q-anonymous-8081.exp.direct", // Allow Expo tunnel URL
+                "https://carfix-production.up.railway.app" // Allow your backend URL on Railway
+        ));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS")); // Allow common HTTP
+                                                                                                   // methods
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type")); // Allow required headers
+        configuration.setExposedHeaders(Arrays.asList("Authorization")); // Expose Authorization headers
+        configuration.setAllowCredentials(true); // Allow credentials (important for JWT and secure cookies)
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
+        source.registerCorsConfiguration("/**", configuration); // Apply CORS settings to all endpoints
 
         return source;
     }
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
 }
