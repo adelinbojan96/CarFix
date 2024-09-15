@@ -13,6 +13,7 @@ const MainPage = ({ navigation }) => {
           style={styles.searchIcon}
         />
       ),
+      
       headerRight: () => (
         <Image 
           source={require('./assets/sir_alex.png')} 
