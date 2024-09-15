@@ -28,22 +28,37 @@ const MainPage = ({ navigation }) => {
 
   const [firms, setFirms] = useState(null);
 
-  const renderFirms = () => {
-    axios.get("https://carfix-production.up.railway.app/firms")
-      .then(response => {
-        console.error("Full API Response:", response);  // Log the full API response for debugging
-        console.log("Data from API:", response.data);  // Log what the `response.data` looks like
+  // Placeholder for your token. You may get this dynamically (e.g., from login or environment variables).
+  const authToken = "your-authentication-token";  // Replace with your actual token
 
-        // Check if response.data is an array
+  const renderFirms = () => {
+    axios.get("https://carfix-production.up.railway.app/api/brands", {
+      headers: {
+        'Accept': 'application/json',         // Expect JSON response
+        'Authorization': `Bearer ${authToken}`  // Add the token in the Authorization header
+      }
+    })
+    .then(response => {
+      console.log("Full Response:", response);
+      console.log("Status Code:", response.status);  // Log the status code
+      console.log("Content-Type:", response.headers['content-type']);  // Log content-type
+
+      // Check if the response is a valid JSON
+      if (response.status === 200 && response.headers['content-type'].includes('application/json')) {
+        console.log("Data from API:", response.data);  // Log the JSON data
         if (Array.isArray(response.data)) {
           setFirms(response.data);
         } else {
           console.error("Expected an array, but got something else:", response.data);
         }
-      })
-      .catch(error => {
-        console.error("Error fetching firms:", error);
-      });
+      } else {
+        console.error("Unexpected content type or status code:", response.status, response.headers['content-type']);
+        console.log("HTML Response Body:", response.data);  // Log the HTML content if not JSON
+      }
+    })
+    .catch(error => {
+      console.error("Error fetching firms:", error);
+    });
   };
 
   useEffect(() => {
@@ -75,7 +90,7 @@ const MainPage = ({ navigation }) => {
               );
             })
           ) : (
-            <Text>No firms found</Text>  // Fallback in case the array is empty or firms is not an array
+            <Text>No firms found</Text>  // Fallback if the array is empty
           )
         )}
       </View>
