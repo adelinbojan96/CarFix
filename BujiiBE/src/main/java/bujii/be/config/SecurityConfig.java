@@ -24,30 +24,22 @@ public class SecurityConfig {
         return http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Apply CORS settings
                 .csrf(AbstractHttpConfigurer::disable) // Disable CSRF
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Use
-                                                                                                              // stateless
-                                                                                                              // sessions
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Use stateless sessions
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/users/login", "/users/register", "/api/brands").permitAll() // Allow access
-                                                                                                       // to certain
-                                                                                                       // endpoints
-                        .anyRequest().authenticated()) // All other endpoints require authentication
+                        .anyRequest().permitAll() // Allow access to all requests
+                )
                 .build();
     }
+
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList(
-                "http://localhost:8081", // Allow localhost during development
-                "https://x33rw4q-anonymous-8081.exp.direct", // Allow Expo tunnel URL
-                "https://carfix-production.up.railway.app" // Allow your backend URL on Railway
-        ));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS")); // Allow common HTTP
-                                                                                                   // methods
-        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type")); // Allow required headers
-        configuration.setExposedHeaders(Arrays.asList("Authorization")); // Expose Authorization headers
-        configuration.setAllowCredentials(true); // Allow credentials (important for JWT and secure cookies)
+        configuration.setAllowedOrigins(Arrays.asList("*"));  // Allow all origins for simplicity
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS")); // Allow common methods
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type")); // Allow these headers
+        configuration.setExposedHeaders(Arrays.asList("Authorization")); // Expose Authorization header for JWT
+        configuration.setAllowCredentials(true); // Allow credentials
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration); // Apply CORS settings to all endpoints

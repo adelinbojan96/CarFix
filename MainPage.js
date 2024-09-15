@@ -1,6 +1,7 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { View, Text, Image, StyleSheet, ScrollView } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const MainPage = ({ navigation }) => {
   useEffect(() => {
@@ -13,9 +14,6 @@ const MainPage = ({ navigation }) => {
           style={styles.searchIcon}
         />
       ),
-
-
-      
       headerRight: () => (
         <Image 
           source={require('./assets/sir_alex.png')} 
@@ -31,22 +29,30 @@ const MainPage = ({ navigation }) => {
 
   const [firms, setFirms] = useState(null);
 
-  const renderFirms = () => {
-    axios.get("https://carfix-production.up.railway.app/api/brands")
-      .then(response => {
-        console.error("Full API Response:", response);  // Log the full API response for debugging
-        console.log("Data from API:", response.data);  // Log what the `response.data` looks like
+  const renderFirms = async () => {
+    try {
+      const authToken = await AsyncStorage.getItem('authToken');  // Retrieve JWT token from AsyncStorage
 
-        // Check if response.data is an array
-        if (Array.isArray(response.data)) {
-          setFirms(response.data);
-        } else {
-          console.error("Expected an array, but got something else:", response.data);
+      if (!authToken) {
+        console.error("No auth token found. Redirecting to login.");
+        navigation.navigate('Login');  // Redirect to login if token is missing
+        return;
+      }
+
+      const response = await axios.get("https://carfix-production.up.railway.app/api/brands", {
+        headers: {
+          'Authorization': `Bearer ${authToken}`,  // Include JWT token in the request
         }
-      })
-      .catch(error => {
-        console.error("Error fetching firms:", error);
       });
+
+      if (Array.isArray(response.data)) {
+        setFirms(response.data);
+      } else {
+        console.error("Expected an array, but got something else:", response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching firms:", error);
+    }
   };
 
   useEffect(() => {
@@ -78,7 +84,7 @@ const MainPage = ({ navigation }) => {
               );
             })
           ) : (
-            <Text>No firms found</Text>  // Fallback in case the array is empty or firms is not an array
+            <Text>No firms found</Text>
           )
         )}
       </View>

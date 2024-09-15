@@ -11,35 +11,32 @@ export default function LoginScreen({ navigation }) {
   const [password, setPassword] = useState('');
 
   const handleLogin = async () => {
-    try {
-      const response = await axios.post('https://carfix-production.up.railway.app/users/login', {
-        username: username,
-        password: password,
-      });
+  try {
+    const response = await axios.post('https://carfix-production.up.railway.app/users/login', {
+      username,
+      password,
+    });
 
-      const token = response.data.jwt; // Extract JWT token
+    const token = response.data.jwt;
 
-      // Save the token in AsyncStorage
-      await AsyncStorage.setItem('authToken', token);
+    await AsyncStorage.setItem('authToken', token);  // Save token securely in AsyncStorage
 
-      Toast.show({
-        type: 'success',
-        text1: 'Login Successful',
-        text2: `JWT: ${token}`,
-      });
+    Toast.show({
+      type: 'success',
+      text1: 'Login Successful',
+      text2: 'You are now logged in.',
+    });
 
-      // Navigate to the main page after successful login
-      navigation.navigate('MainPage');
-      
-    } catch (error) {
-      const errorMessage = error.response?.data?.message || error.message || 'An unexpected error occurred';
-      Toast.show({
-        type: 'error',
-        text1: 'Login failed. Please try again.',
-        text2: errorMessage,
-      });
-    }
-  };
+    navigation.navigate('MainPage');
+  } catch (error) {
+    const errorMessage = error.response?.data?.message || error.message || 'An unexpected error occurred';
+    Toast.show({
+      type: 'error',
+      text1: 'Login Failed',
+      text2: errorMessage,
+    });
+  }
+};
 
   return (
     <View style={styles.container}>
