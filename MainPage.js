@@ -13,6 +13,8 @@ const MainPage = ({ navigation }) => {
           style={styles.searchIcon}
         />
       ),
+
+
       
       headerRight: () => (
         <Image 
