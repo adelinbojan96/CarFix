@@ -35,23 +35,20 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/user/validate").permitAll()
                         .requestMatchers(HttpMethod.GET, "/user/validateToken").permitAll()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll() // Open API docs
-                        // Example of securing other endpoints with role-based access
-                        .requestMatchers(HttpMethod.POST, "/albums").hasAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/albums/*").hasAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/albums/*").hasAuthority("ADMIN")
-                        .anyRequest().authenticated()) // Require authentication for all other requests
+                        // Remove authentication for now to allow open access
+                        .anyRequest().permitAll()) // Allow all other requests without authentication
                 .build();
     }
 
-    // CORS configuration
+    // CORS configuration: allow everything for now
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("https://x33rw4q-anonymous-8081.exp.direct", "https://carfix-production.up.railway.app", "http://localhost:8082"));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
-        configuration.setExposedHeaders(Arrays.asList("Authorization"));
-        configuration.setAllowCredentials(true);
+        configuration.setAllowedOrigins(Arrays.asList("*")); // Allow all origins (use "*" to allow any domain)
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS")); // Allow all HTTP methods
+        configuration.setAllowedHeaders(Arrays.asList("*")); // Allow all headers
+        configuration.setExposedHeaders(Arrays.asList("Authorization")); // Expose Authorization header if needed
+        configuration.setAllowCredentials(true); // Allow credentials for requests (cookies, authorization)
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration); // Apply CORS configuration globally
