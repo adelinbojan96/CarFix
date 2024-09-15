@@ -14,7 +14,7 @@ public class CorsConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("https://x33rw4q-anonymous-8081.exp.direct", "https://carfix-production.up.railway.app", "http://localhost:8082")); // Your frontend URLs
+        configuration.setAllowedOrigins(Arrays.asList("https://x33rw4q-anonymous-8081.exp.direct", "https://carfix-production.up.railway.app", "http://localhost:8081"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
         configuration.setExposedHeaders(Arrays.asList("Authorization"));
