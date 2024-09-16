@@ -11,11 +11,16 @@ public class CorsConfig implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")  // Apply to all routes
-                .allowedOrigins("http://localhost:8081", "https://x33rw4q-anonymous-8081.exp.direct", "http://localhost:8080", "https://x33rw4q-anonymous-8081.exp.direct")  // Allow requests from these origins
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")  // Allow these HTTP methods
-                .allowedHeaders("*")  // Allow all headers
-                .exposedHeaders("Authorization")  // Expose Authorization headers if necessary
-                .allowCredentials(true);  // Allow credentials (JWT tokens, cookies, etc.)
+        registry.addMapping("/**")
+                .allowedOrigins(
+                        "http://localhost:8082",
+                        "http://localhost:8081",
+                        "https://x33rw4q-anonymous-8081.exp.direct"
+                )  // Allow requests from these origins
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                .allowedHeaders("Content-Type", "Authorization")
+                .exposedHeaders("Access-Control-Allow-Origin")
+                .allowCredentials(true);
     }
+
 }
