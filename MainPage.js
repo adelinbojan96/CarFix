@@ -29,7 +29,7 @@ const MainPage = ({ navigation }) => {
   const [firms, setFirms] = useState(null);
 
   const renderFirms = () => {
-    axios.get("http://localhost:8082/api/brands")
+    axios.get("https://painful-essie-g3z4-21d8c9bb.koyeb.app/api/brands")
       .then(response => {
         console.error("Full API Response:", response);  // Log the full API response for debugging
         console.log("Data from API:", response.data);  // Log what the `response.data` looks like
