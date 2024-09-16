@@ -1,80 +1,45 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import Toast from 'react-native-toast-message';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { View, Text, TextInput, StyleSheet, Image, TouchableWithoutFeedback, TouchableOpacity, ScrollView } from 'react-native';
+import { Alert } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Image, TouchableWithoutFeedback, TouchableOpacity } from 'react-native';
 
 export default function LoginScreen({ navigation }) {
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [loginStatus, setLoginStatus] = useState(null);  // State to track login status
-  const [users, setUsers] = useState([]);  // State to store all users from the database
 
-  const handleLogin = async () => {
-    try {
-      const response = await axios.post('https://carfix-production.up.railway.app/users/login', {
-        username,
-        password,
-      });
+  const handleLogin = () => {
+  axios.post('http://localhost:8082/users/login', {
+    username: username,
+    password: password,
+  })
+  .then(response => {
+    const token = response.data.jwt;
 
-      const token = response.data.jwt;
+    Toast.show({
+      type: 'success',
+      text1: 'Login Successful',
+      text2: `JWT: ${token}`,
+    });
 
-      // If token is received, login was successful
-      if (token) {
-        await AsyncStorage.setItem('authToken', token);  // Save token securely in AsyncStorage
-        setLoginStatus('OK');  // Set login status to "OK"
-        
-        Toast.show({
-          type: 'success',
-          text1: 'Login Successful',
-          text2: 'You are now logged in.',
-        });
+    navigation.navigate('MainPage');
+  })
+  .catch(error => {
+    const errorMessage = error.response?.data?.message || error.message || 'An unexpected error occurred';
+    Toast.show({
+      type: 'error',
+      text1: 'Login failed. Please try again.',
+      text2: errorMessage,
+    });
+  });
+};
 
-        // Navigate to MainPage
-        navigation.navigate('MainPage');
-      } else {
-        setLoginStatus(JSON.stringify(response.data, null, 2));  // No token found, set loginStatus to response data
-        fetchAllUsers();  // Fetch all users if login fails
-      }
-    } catch (error) {
-      const errorMessage = error.response?.data?.message || error.message || 'An unexpected error occurred';
-      setLoginStatus(JSON.stringify(error.response?.data, null, 2));  // Set loginStatus to error response data
-      fetchAllUsers();  // Fetch all users in case of error
-      Toast.show({
-        type: 'error',
-        text1: 'Login Failed',
-        text2: errorMessage,
-      });
-    }
-  };
-
-  const fetchAllUsers = async () => {
-    try {
-      const response = await axios.get('https://carfix-production.up.railway.app/users');
-      
-      console.log("Fetched users data:", response.data); // Debugging: Log the data structure
-      
-      // Ensure that the response data is an array
-      if (Array.isArray(response.data)) {
-        setUsers(response.data);  // Set the users to the state if it's an array
-      } else {
-        console.error('Expected an array but received:', response.data);
-        setUsers([]); // Set to an empty array if the data isn't an array
-      }
-    } catch (error) {
-      Toast.show({
-        type: 'error',
-        text1: 'Error fetching users',
-        text2: error.message || 'Could not retrieve users from the database',
-      });
-    }
-  };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <View style={styles.container}>
       <Text style={styles.loginText}>LOGIN</Text>
-
+      
       <TextInput
         style={styles.input}
         placeholder="Username"
@@ -82,7 +47,7 @@ export default function LoginScreen({ navigation }) {
         value={username}
         onChangeText={setUsername}
       />
-
+      
       <TextInput
         style={styles.input}
         placeholder="Password"
@@ -91,7 +56,7 @@ export default function LoginScreen({ navigation }) {
         value={password}
         onChangeText={setPassword}
       />
-
+      
       <TouchableOpacity style={styles.button} onPress={handleLogin}>
         <Text style={styles.buttonText}>Login</Text>
       </TouchableOpacity>
@@ -111,28 +76,7 @@ export default function LoginScreen({ navigation }) {
         </View>
       </TouchableWithoutFeedback>
 
-      {/* Display login status for debugging purposes */}
-      <Text style={styles.loginStatusText}>
-        {loginStatus && (
-          <>
-            <Text>Login Status:</Text>
-            <Text>{loginStatus}</Text>
-          </>
-        )}
-      </Text>
-
-      {/* Display all users if login fails */}
-      {loginStatus === 'Null' && users.length > 0 && (
-        <View style={styles.usersContainer}>
-          <Text style={styles.usersTitle}>Users in the Database:</Text>
-          {users.map((user, index) => (
-            <Text key={index} style={styles.userText}>
-              {user.username} - {user.email}
-            </Text>
-          ))}
-        </View>
-      )}
-    </ScrollView>
+    </View>
   );
 }
 
@@ -196,21 +140,5 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline',
     color: '#000',
     fontFamily: 'Taviraj_400Regular', 
-  },
-  loginStatusText: {
-    marginTop: 20,
-    fontSize: 18,
-    color: 'red',  // Display status in red for easier visibility during debugging
-  },
-  usersContainer: {
-    marginTop: 30,
-  },
-  usersTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  userText: {
-    fontSize: 16,
-    color: '#000',
   },
 });
