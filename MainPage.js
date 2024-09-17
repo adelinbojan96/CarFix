@@ -1,40 +1,43 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { View, Text, Image, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 
-const MainPage = ({ navigation }) => {
+const MainPage = ({ navigation, route }) => {
+  const { username } = route.params; // getting the username from route params
+
   useEffect(() => {
+  
     navigation.setOptions({
-      headerTitle: 'Hello, Sir Alex', 
+      headerTitle: `Welcome, user ${username}`, 
       headerTitleAlign: 'center',
       headerLeft: () => (
-        <Image 
-          source={require('./assets/search.png')} 
-          style={styles.searchIcon}
-        />
+        <TouchableOpacity onPress={() => navigation.navigate('SearchPage')}>
+          <Image 
+            source={require('./assets/search.png')} 
+            style={styles.searchIcon}
+          />
+        </TouchableOpacity>
       ),
       headerRight: () => (
-        <Image 
-          source={require('./assets/sir_alex.png')} 
-          style={styles.avatar}
-        />
+        <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
+          <Image 
+            source={require('./assets/sir_alex.png')} 
+            style={styles.avatar}
+          />
+        </TouchableOpacity>
       ),
       headerStyle: {
         backgroundColor: '#a6b2b9', 
         height: 150,  
       },
     });
-  }, [navigation]);
+  }, [username, navigation]);
 
   const [firms, setFirms] = useState(null);
 
   const renderFirms = () => {
     axios.get("https://painful-essie-g3z4-21d8c9bb.koyeb.app/api/brands")
       .then(response => {
-        console.error("Full API Response:", response);  // Log the full API response for debugging
-        console.log("Data from API:", response.data);  // Log what the `response.data` looks like
-
-        // Check if response.data is an array
         if (Array.isArray(response.data)) {
           setFirms(response.data);
         } else {
@@ -51,35 +54,49 @@ const MainPage = ({ navigation }) => {
   }, []);
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <View style={styles.titleContainer}>
-        <Text style={styles.title}>Brands</Text>
-        <View style={styles.underline} />
-      </View>
-      
-      <View style={styles.boxContainer}>
-        {!firms ? (
-          <Text>Loading...</Text>
-        ) : (
-          Array.isArray(firms) && firms.length > 0 ? (
-            firms.map((element, index) => {
-              const base64Image = `data:image/png;base64,${element.image}`;
-              return (
-                <View key={index} style={styles.brandBox}>
-                  <Image 
-                    source={{ uri: base64Image }} 
-                    style={styles.brandImage}
-                  />
-                  <Text style={styles.brandText}>{element.name}</Text>
-                </View>
-              );
-            })
+    <View style={{ flex: 1 }}>
+      <ScrollView contentContainerStyle={styles.container}>
+        <View style={styles.titleContainer}>
+          <Text style={styles.title}>Brands</Text>
+          <View style={styles.underline} />
+        </View>
+        
+        <View style={styles.boxContainer}>
+          {!firms ? (
+            <Text>Loading...</Text>
           ) : (
-            <Text>No firms found</Text>  // Fallback in case the array is empty or firms is not an array
-          )
-        )}
-      </View>
-    </ScrollView>
+            Array.isArray(firms) && firms.length > 0 ? (
+              firms.map((element, index) => {
+                const base64Image = `data:image/png;base64,${element.image}`;
+                return (
+                  <TouchableOpacity 
+                    key={index} 
+                    style={styles.brandBox} 
+                    onPress={() => navigation.navigate('SearchPage')}>
+                    <Image 
+                      source={{ uri: base64Image }} 
+                      style={styles.brandImage}
+                    />
+                    <Text style={styles.brandText}>{element.name}</Text>
+                  </TouchableOpacity>
+                );
+              })
+            ) : (
+              <Text>No firms found</Text> 
+            )
+          )}
+        </View>
+      </ScrollView>
+      
+      <TouchableOpacity 
+        style={styles.floatingButton} 
+        onPress={() => alert("Message icon clicked!")}>
+        <Image 
+          source={require('./assets/message_icon.png')} 
+          style={styles.messageIcon}
+        />
+      </TouchableOpacity>
+    </View>
   );
 };
 
@@ -118,7 +135,7 @@ const styles = StyleSheet.create({
     aspectRatio: 1, 
     alignItems: 'center', 
     justifyContent: 'center',
-    marginBottom: 20, 
+    marginBottom: 40, 
     shadowColor: '#000', 
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3, 
@@ -150,6 +167,22 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: -35,
     right: 5,
+  },
+  floatingButton: {
+    position: 'absolute',
+    bottom: 30, 
+    right: 30, 
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#a6b2b9',  
+    elevation: 8,            
+  },
+  messageIcon: {
+    width: 40,
+    height: 40,
   },
 });
 

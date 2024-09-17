@@ -7,7 +7,9 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoginScreen from './LoginScreen';
 import RegisterScreen from './RegisterScreen';
-import MainPage from './MainPage';  
+import MainPage from './MainPage';
+import Profile from './Profile';
+import SearchPage from './SearchPage'; // Import SearchPage
 
 const Stack = createNativeStackNavigator();
 
@@ -55,13 +57,31 @@ export default function App() {
             headerTitleAlign: 'center',
             headerStyle: {
               backgroundColor: '#a6b2b9',
-              height: 260, // Adjust the height here
+              height: 260,
             },
             headerTitleStyle: {
-              fontSize: 24, // Adjust the font size if needed
+              fontSize: 24,
             },
             headerLeft: null,
           }} 
+        />
+        <Stack.Screen 
+          name="Profile" 
+          component={Profile} 
+          options={{
+            headerTitle: 'Profile',
+            headerTitleAlign: 'center',
+            headerShown: false
+          }}
+        />
+        <Stack.Screen 
+          name="SearchPage" 
+          component={SearchPage} 
+          options={{
+            headerTitle: 'Search',
+            headerTitleAlign: 'center',
+            headerShown: false
+          }}
         />
       </Stack.Navigator>
     </NavigationContainer>

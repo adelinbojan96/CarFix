@@ -23,7 +23,8 @@ export default function LoginScreen({ navigation }) {
       text2: `JWT: ${token}`,
     });
 
-    navigation.navigate('MainPage');
+    // Pass the username as a parameter when navigating to MainPage
+    navigation.navigate('MainPage', { username });
   })
   .catch(error => {
     const errorMessage = error.response?.data?.message || error.message || 'An unexpected error occurred';
@@ -34,6 +35,7 @@ export default function LoginScreen({ navigation }) {
     });
   });
 };
+
 
 
   return (
