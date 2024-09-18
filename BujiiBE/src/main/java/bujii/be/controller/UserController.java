@@ -25,4 +25,10 @@ public class UserController {
     public void register(@RequestBody UserCreateDto userCreateDto) {
         userService.register(userCreateDto);
     }
+    @PostMapping("/profile")
+    @ResponseStatus(HttpStatus.OK)
+    public void editProfile(@RequestParam String formerUsername, @RequestBody UserCreateDto userCreateDto) {
+        userService.editProfile(formerUsername, userCreateDto);
+    }
+
 }

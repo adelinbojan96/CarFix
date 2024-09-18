@@ -8,7 +8,7 @@ const MainPage = ({ navigation, route }) => {
   useEffect(() => {
   
     navigation.setOptions({
-      headerTitle: `Welcome, user ${username}`, 
+      headerTitle: `Welcome, ${username}`, 
       headerTitleAlign: 'center',
       headerLeft: () => (
         <TouchableOpacity onPress={() => navigation.navigate('SearchPage')}>
@@ -19,7 +19,7 @@ const MainPage = ({ navigation, route }) => {
         </TouchableOpacity>
       ),
       headerRight: () => (
-        <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
+        <TouchableOpacity onPress={() => navigation.navigate('Profile', {formerUsername: username})}>
           <Image 
             source={require('./assets/sir_alex.png')} 
             style={styles.avatar}
@@ -36,7 +36,7 @@ const MainPage = ({ navigation, route }) => {
   const [firms, setFirms] = useState(null);
 
   const renderFirms = () => {
-    axios.get("https://painful-essie-g3z4-21d8c9bb.koyeb.app/api/brands")
+    axios.get("http://localhost:8082/api/brands")
       .then(response => {
         if (Array.isArray(response.data)) {
           setFirms(response.data);
@@ -87,7 +87,7 @@ const MainPage = ({ navigation, route }) => {
           )}
         </View>
       </ScrollView>
-      
+
       <TouchableOpacity 
         style={styles.floatingButton} 
         onPress={() => alert("Message icon clicked!")}>

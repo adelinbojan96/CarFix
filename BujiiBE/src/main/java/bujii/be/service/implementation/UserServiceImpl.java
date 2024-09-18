@@ -26,7 +26,6 @@ public class UserServiceImpl implements UserService {
         if(!passwordEncoder.matches(loginDto.getPassword(),user.getPassword())){
             throw new LoginError("Bad credentials");
         }
-
         try {
             var accessToken = tokenProvider.generateAccessToken(user);
             return new LoginViewDto(accessToken);
@@ -40,5 +39,11 @@ public class UserServiceImpl implements UserService {
     public void register(UserCreateDto userCreateDto) {
         userCreateDto.setPassword(new BCryptPasswordEncoder().encode(userCreateDto.getPassword()));
         userDao.register(userCreateDto);
+    }
+    @Override
+    public void editProfile(String formerUsername, UserCreateDto userCreateDto) {
+        if (userCreateDto.getPassword() != null && !userCreateDto.getPassword().isEmpty())
+            userCreateDto.setPassword(new BCryptPasswordEncoder().encode(userCreateDto.getPassword()));
+        userDao.editProfile(formerUsername, userCreateDto);
     }
 }

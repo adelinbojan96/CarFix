@@ -7,4 +7,6 @@ public interface UserDao {
     User findByUsername(String username);
 
     void register(UserCreateDto userCreateDto);
+
+    void editProfile(String formerUsername, UserCreateDto userCreateDto);
 }
