@@ -20,7 +20,7 @@ export default function RegisterScreen({ navigation }) {
         text2: 'Confirm Password does not match with the password.',
       });
     }else{
-      axios.post('http://localhost:8082/users/register', {
+      axios.post('https://painful-essie-g3z4-21d8c9bb.koyeb.app/users/register', {
         username: username,
         email: email,
         password: password,

@@ -10,13 +10,12 @@ export default function LoginScreen({ navigation }) {
   const [password, setPassword] = useState('');
 
 const handleLogin = () => {
-  axios.post('http://localhost:8082/users/login', {
+  axios.post('https://painful-essie-g3z4-21d8c9bb.koyeb.app/users/login', {
     username: username,
     password: password,
   })
   .then(response => {
     const token = response.data.jwt;
-    Alert.alert('Login Successful', `JWT: ${token}`);
     navigation.navigate('MainPage', { username });
   })
   .catch(error => {

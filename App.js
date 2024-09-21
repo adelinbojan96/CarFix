@@ -9,7 +9,8 @@ import LoginScreen from './LoginScreen';
 import RegisterScreen from './RegisterScreen';
 import MainPage from './MainPage';
 import Profile from './Profile';
-import SearchPage from './SearchPage'; // Import SearchPage
+import SearchPage from './SearchPage';
+import Messages from './Messages';
 
 const Stack = createNativeStackNavigator();
 
@@ -83,6 +84,15 @@ export default function App() {
             headerShown: false
           }}
         />
+        <Stack.Screen 
+          name="Messages" 
+          component={Messages} 
+          options={{
+            headerTitle: 'Messages',
+            headerTitleAlign: 'center',
+            headerShown: false,
+          }} 
+        />        
       </Stack.Navigator>
     </NavigationContainer>
   );
