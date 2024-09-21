@@ -9,34 +9,26 @@ export default function LoginScreen({ navigation }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleLogin = () => {
-  axios.post('https://painful-essie-g3z4-21d8c9bb.koyeb.app/users/login', {
+const handleLogin = () => {
+  axios.post('http://localhost:8082/users/login', {
     username: username,
     password: password,
   })
   .then(response => {
     const token = response.data.jwt;
-
-    Toast.show({
-      type: 'success',
-      text1: 'Login Successful',
-      text2: `JWT: ${token}`,
-    });
-
-    // Pass the username as a parameter when navigating to MainPage
+    Alert.alert('Login Successful', `JWT: ${token}`);
     navigation.navigate('MainPage', { username });
   })
   .catch(error => {
-    const errorMessage = error.response?.data?.message || error.message || 'An unexpected error occurred';
-    Toast.show({
-      type: 'error',
-      text1: 'Login failed. Please try again.',
-      text2: errorMessage,
-    });
+    const statusCode = error.response?.status;
+    if (statusCode === 401 || statusCode === 400 || statusCode == 404) {
+      alert('Please enter a correct username and password.');
+    } else {
+      const errorMessage = error.response?.data?.message || error.message || 'An unexpected error occurred';
+      alert(errorMessage);
+    }
   });
 };
-
-
 
   return (
     <View style={styles.container}>
@@ -91,7 +83,7 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   loginText: {
-    fontSize: 43,
+    fontSize: 52,
     fontWeight: 'bold',
     marginBottom: 70,
     fontFamily: 'Tapestry_400Regular',

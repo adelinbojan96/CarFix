@@ -24,7 +24,6 @@ public class UserDaoImpl implements UserDao {
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException("User with username %s doesn't exists".formatted(username)));
     }
-
     @Override
     public void register(UserCreateDto userCreateDto) {
         User user = userMapper.toEntity(userCreateDto);
@@ -32,5 +31,17 @@ public class UserDaoImpl implements UserDao {
         user.setCreated_at(Timestamp.from(Instant.now()));
 
         userRepository.save(user);
+    }
+
+    @Override
+    public void editProfile(String formerUsername, UserCreateDto userCreateDto) {
+        User existingUser = userRepository.findByUsername(formerUsername)
+                .orElseThrow(() -> new EntityNotFoundException("User with username %s doesn't exist".formatted(userCreateDto.getUsername())));
+
+        existingUser.setUsername(userCreateDto.getUsername());
+        existingUser.setPassword(userCreateDto.getPassword());
+        existingUser.setEmail(userCreateDto.getEmail());
+
+        userRepository.save(existingUser);
     }
 }
