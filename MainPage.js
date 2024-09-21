@@ -90,7 +90,7 @@ const MainPage = ({ navigation, route }) => {
 
       <TouchableOpacity 
         style={styles.floatingButton} 
-        onPress={() => navigation.navigate('Messages')}>
+        onPress={() => navigation.navigate('Messages', { username })}>
         <Image 
           source={require('./assets/message_icon.png')} 
           style={styles.messageIcon}
@@ -166,7 +166,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: '#000',
     position: 'absolute',
-    top: -35,
+    bottom: -20,
     right: 5,
   },
   floatingButton: {

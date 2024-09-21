@@ -11,7 +11,7 @@ import MainPage from './MainPage';
 import Profile from './Profile';
 import SearchPage from './SearchPage';
 import Messages from './Messages';
-
+import DirectMessage from './DirectMessage';
 const Stack = createNativeStackNavigator();
 
 export default function App() {
@@ -87,9 +87,14 @@ export default function App() {
         <Stack.Screen 
           name="Messages" 
           component={Messages} 
+         options={{ 
+           headerShown: false,
+          }} 
+        />    
+        <Stack.Screen 
+          name="DirectMessage" 
+          component={DirectMessage} 
           options={{
-            headerTitle: 'Messages',
-            headerTitleAlign: 'center',
             headerShown: false,
           }} 
         />        
