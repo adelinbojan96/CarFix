@@ -36,7 +36,7 @@ const MainPage = ({ navigation, route }) => {
   const [firms, setFirms] = useState(null);
 
   const renderFirms = () => {
-    axios.get("http://localhost:8082/api/brands")
+    axios.get("https://painful-essie-g3z4-21d8c9bb.koyeb.app/api/brands")
       .then(response => {
         if (Array.isArray(response.data)) {
           setFirms(response.data);
@@ -90,12 +90,13 @@ const MainPage = ({ navigation, route }) => {
 
       <TouchableOpacity 
         style={styles.floatingButton} 
-        onPress={() => alert("Message icon clicked!")}>
+        onPress={() => navigation.navigate('Messages', { username })}>
         <Image 
           source={require('./assets/message_icon.png')} 
           style={styles.messageIcon}
         />
       </TouchableOpacity>
+
     </View>
   );
 };
@@ -165,7 +166,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: '#000',
     position: 'absolute',
-    top: -35,
+    bottom: -20,
     right: 5,
   },
   floatingButton: {
