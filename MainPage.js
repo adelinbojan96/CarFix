@@ -1,14 +1,32 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { 
+  View, Text, Image, StyleSheet, ScrollView, TouchableOpacity 
+} from 'react-native';
 
 const MainPage = ({ navigation, route }) => {
-  const { username } = route.params; // getting the username from route params
+  const { username } = route.params;
+
+  const [profileImageUri, setProfileImageUri] = useState(null); // No default image
 
   useEffect(() => {
-  
+    // Fetch the profile image based on the username
+    axios.get(`http://localhost:8082/users/profile-image?username=${username}`)
+      .then(response => {
+        const base64Image = response.data; 
+        if (base64Image) {
+          // Construct the data URI
+          const imageUri = `data:image/png;base64,${base64Image}`;
+          setProfileImageUri({ uri: imageUri });
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching profile image:', error);
+      });
+
+    // Set the navigation options dynamically based on the username and profile image
     navigation.setOptions({
-      headerTitle: `Welcome, ${username}`, 
+      headerTitle: `Welcome, ${username}`,
       headerTitleAlign: 'center',
       headerLeft: () => (
         <TouchableOpacity onPress={() => navigation.navigate('SearchPage')}>
@@ -19,24 +37,28 @@ const MainPage = ({ navigation, route }) => {
         </TouchableOpacity>
       ),
       headerRight: () => (
-        <TouchableOpacity onPress={() => navigation.navigate('Profile', {formerUsername: username})}>
-          <Image 
-            source={require('./assets/sir_alex.png')} 
-            style={styles.avatar}
-          />
+        <TouchableOpacity onPress={() => navigation.navigate('Profile', { formerUsername: username })}>
+          {profileImageUri ? (
+            <Image 
+              source={profileImageUri} // Use the fetched profile image
+              style={styles.avatar}
+            />
+          ) : (
+            <Text style={styles.noImageText}>No image</Text>
+          )}
         </TouchableOpacity>
       ),
       headerStyle: {
         backgroundColor: '#a6b2b9', 
-        height: 150,  
+        height: 150,
       },
     });
-  }, [username, navigation]);
+  }, [username, profileImageUri, navigation]);
 
   const [firms, setFirms] = useState(null);
 
   const renderFirms = () => {
-    axios.get("https://painful-essie-g3z4-21d8c9bb.koyeb.app/api/brands")
+    axios.get("http://localhost:8082/api/brands")
       .then(response => {
         if (Array.isArray(response.data)) {
           setFirms(response.data);
@@ -82,7 +104,7 @@ const MainPage = ({ navigation, route }) => {
                 );
               })
             ) : (
-              <Text>No firms found</Text> 
+              <Text>No firms found</Text>
             )
           )}
         </View>
@@ -168,6 +190,12 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: -20,
     right: 5,
+  },
+  noImageText: {
+    fontSize: 14,
+    color: '#555',
+    textAlign: 'center',
+    marginTop: 10,
   },
   floatingButton: {
     position: 'absolute',

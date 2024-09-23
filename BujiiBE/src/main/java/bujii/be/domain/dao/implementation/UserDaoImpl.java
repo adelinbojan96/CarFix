@@ -41,7 +41,11 @@ public class UserDaoImpl implements UserDao {
         existingUser.setUsername(userCreateDto.getUsername());
         existingUser.setPassword(userCreateDto.getPassword());
         existingUser.setEmail(userCreateDto.getEmail());
-
         userRepository.save(existingUser);
+    }
+
+    @Override
+    public void saveUser(User user) {
+        userRepository.save(user);
     }
 }

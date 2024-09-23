@@ -10,7 +10,7 @@ spring.application.name=BujiiBE
 server.port=8082
 
 
-# Database (public Railway PostgreSQL URL)
+# Database (private LocalHost PostgreSQL URL)
 spring.datasource.url=jdbc:postgresql://localhost:5432/carfix
 spring.datasource.username=postgres
 spring.datasource.password=password

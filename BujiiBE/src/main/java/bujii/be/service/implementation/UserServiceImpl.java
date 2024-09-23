@@ -12,6 +12,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -45,5 +49,27 @@ public class UserServiceImpl implements UserService {
         if (userCreateDto.getPassword() != null && !userCreateDto.getPassword().isEmpty())
             userCreateDto.setPassword(new BCryptPasswordEncoder().encode(userCreateDto.getPassword()));
         userDao.editProfile(formerUsername, userCreateDto);
+    }
+
+    @Override
+    public void saveProfileImage(String username, MultipartFile file) throws IOException {
+        User user = userDao.findByUsername(username);
+        if(user == null)
+            throw new RuntimeException("User not found");
+        if (!Objects.equals(file.getContentType(), "image/png"))
+            throw new RuntimeException("File is not an image of type PNG. Please try something else");
+        if (file.getSize() > 5000000) {
+            throw new RuntimeException("File size exceeds the limit of 5MB");
+        }
+        //conversion of multipart to byte
+        byte[] imageData = file.getBytes();
+        user.setPicture(imageData);
+        userDao.saveUser(user);
+    }
+
+    @Override
+    public byte[] loadImageFromDatabase(String username) {
+        User user = userDao.findByUsername(username);
+        return user.getPicture();
     }
 }
