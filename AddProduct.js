@@ -1,23 +1,34 @@
 import React, { useState, useEffect } from 'react';
 import { 
   View, Text, TextInput, TouchableOpacity, StyleSheet, 
-  Image, CheckBox, Alert, Platform 
+  Image, Alert, Platform 
 } from 'react-native';
 import axios from 'axios';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
+import Checkbox from '@react-native-community/checkbox';
+
+// Create a CheckboxComponent that works on both web and mobile platforms
+const CheckboxComponent = Platform.OS === 'web' 
+  ? ({ value, onValueChange }) => (
+      <input type="checkbox" checked={value} onChange={e => onValueChange(e.target.checked)} />
+    )
+  : Checkbox;
 
 const AddProduct = ({ route, navigation }) => {
   const { username } = route.params;
+  
+  // State variables
   const [productName, setProductName] = useState('');
   const [productDescription, setProductDescription] = useState('');
   const [price, setPrice] = useState('');
   const [quantity, setQuantity] = useState('');
   const [selectedFirm, setSelectedFirm] = useState('');
-  const [imageUri, setImageUri] = useState(null);
+  const [imageUri, setImageUri] = useState(null); // For image preview
+  const [imageFile, setImageFile] = useState(null); // For image upload
   const [firms, setFirms] = useState([]); 
 
-  // Fetch firms from the database when the component mounts
   useEffect(() => {
+    // Fetch firms from backend
     axios.get('http://localhost:8082/api/brands')
       .then(response => {
         if (Array.isArray(response.data)) {
@@ -35,53 +46,52 @@ const AddProduct = ({ route, navigation }) => {
       });
   }, []);
 
+  // Handle firm selection
   const handleFirmSelection = (index) => {
     const updatedFirms = firms.map((firm, i) => ({
       ...firm,
       checked: i === index
     }));
     setFirms(updatedFirms);
-    setSelectedFirm(updatedFirms[index].label); // Update the selected firm
+    setSelectedFirm(updatedFirms[index].label);
   };
 
+  // Handle image selection from library
   const handleChoosePhoto = () => {
-    launchImageLibrary({ mediaType: 'photo' }, (response) => {
-      if (response.didCancel) {
-        console.log('User cancelled image picker');
-      } else if (response.errorCode) {
-        console.error('ImagePicker Error: ', response.errorMessage);
-      } else if (response.assets && response.assets.length > 0) {
-        const uri = response.assets[0].uri;
-        setImageUri(uri); // Update the image URI
-      }
-    });
+    if (Platform.OS === 'web') {
+      document.getElementById('fileInput').click();
+    } else {
+      launchImageLibrary({ mediaType: 'photo', quality: 1 }, (response) => {
+        if (response.didCancel) {
+          console.log('User cancelled image picker');
+        } else if (response.errorCode) {
+          console.error('ImagePicker Error: ', response.errorMessage);
+        } else if (response.assets && response.assets.length > 0) {
+          const asset = response.assets[0];
+          setImageUri(asset.uri);
+          setImageFile(asset);
+          console.log('Image selected:', asset.uri);
+        }
+      });
+    }
   };
 
-  const handleTakePhoto = () => {
-    launchCamera({ mediaType: 'photo' }, (response) => {
-      if (response.didCancel) {
-        console.log('User cancelled image picker');
-      } else if (response.errorCode) {
-        console.error('ImagePicker Error: ', response.errorMessage);
-      } else if (response.assets && response.assets.length > 0) {
-        const uri = response.assets[0].uri;
-        setImageUri(uri); // Update the image URI
-      }
-    });
-  };
+  // Handle file selection on web
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (file) {
-      setImageFile(file); // Store the File object for upload
+      setImageFile(file); 
       const reader = new FileReader();
       reader.onloadend = () => {
-        setImageUri(reader.result); // Show the selected image
+        setImageUri(reader.result);
+        console.log('Image selected (web):', reader.result);
       };
       reader.readAsDataURL(file);
     }
   };
+
+  // Handle saving the product
   const handleSaveProduct = async () => {
-    //validate form fields and firm selection
     if (!productName || !productDescription || !price || !quantity || !selectedFirm) {
       alert('All fields are required! Please fill all fields and select a firm before submitting.');
       return;
@@ -95,12 +105,24 @@ const AddProduct = ({ route, navigation }) => {
       formData.append('quantity', quantity);
       formData.append('firm', selectedFirm);
       formData.append('username', username);
-      if (imageUri) {
-        formData.append('image', {
-          uri: imageUri,
-          type: 'image/png', // Change as needed based on image type
-          name: 'product_image.png', // Change as needed
-        });
+
+      if (Platform.OS === 'web') {
+        if (imageFile) {
+          formData.append('image', imageFile);
+          console.log('Appending image for web:', imageFile);
+        }
+      } else {
+        if (imageUri && imageFile) {
+          const fileName = imageFile.fileName || 'product_image.png'; 
+          const fileType = imageFile.type || 'image/png';
+
+          formData.append('image', {
+            uri: imageUri,
+            type: fileType, 
+            name: fileName,
+          });
+          console.log('Appending image for mobile:', imageUri, fileType, fileName);
+        }
       }
 
       await axios.post('http://localhost:8082/api/products/upload', formData, {
@@ -124,7 +146,7 @@ const AddProduct = ({ route, navigation }) => {
       </View>
 
       <View style={styles.formContainer}>
-        <Text style={styles.label}>Product name</Text>
+        <Text style={styles.label}>Product Name</Text>
         <TextInput 
           style={styles.input} 
           value={productName} 
@@ -132,7 +154,7 @@ const AddProduct = ({ route, navigation }) => {
           placeholder="Enter product name" 
         />
 
-        <Text style={styles.label}>Product description</Text>
+        <Text style={styles.label}>Product Description</Text>
         <TextInput 
           style={styles.input} 
           value={productDescription} 
@@ -163,7 +185,7 @@ const AddProduct = ({ route, navigation }) => {
             <Text style={styles.label}>Firm</Text>
             {firms.map((firm, index) => (
               <View key={index} style={styles.checkboxContainer}>
-                <CheckBox
+                <CheckboxComponent
                   value={firm.checked}
                   onValueChange={() => handleFirmSelection(index)}
                 />
@@ -176,7 +198,8 @@ const AddProduct = ({ route, navigation }) => {
             <Text style={styles.label}>Image</Text>
             <TouchableOpacity onPress={handleChoosePhoto}>
               <Image 
-                source={imageUri ? { uri: imageUri } : require('./BujiiBE/src/main/resources/static/no-image.png')} // Adjust path accordingly
+                key={imageUri} 
+                source={imageUri ? { uri: imageUri } : require('./BujiiBE/src/main/resources/static/no-image.png')} 
                 style={styles.productImage} 
               />
               <Text style={styles.editPictureText}>Edit picture</Text>
@@ -202,6 +225,7 @@ const AddProduct = ({ route, navigation }) => {
   );
 };
 
+// Styles
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -209,10 +233,9 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   header: {
-    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 1, //should be 20
+    marginBottom: 20,
     backgroundColor: '#a6b2b9', 
     padding: 20, 
     borderRadius: 10,
@@ -238,7 +261,7 @@ const styles = StyleSheet.create({
   input: {
     backgroundColor: '#d0bfae',
     padding: 10,
-    borderRadius: 20,
+    borderRadius: 20, 
     borderWidth: 1,
     borderColor: '#000',
     marginBottom: 15,
@@ -267,9 +290,12 @@ const styles = StyleSheet.create({
   },
   productImage: {
     width: 200,
-    height: 100,
+    height: 200, // Increased height for better visibility
     resizeMode: 'contain',
     marginTop: 10,
+    borderWidth: 1,
+    borderColor: '#000',
+    borderRadius: 10,
   },
   editPictureText: {
     fontSize: 16,
