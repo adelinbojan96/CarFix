@@ -22,7 +22,7 @@ const Profile = ({ route, navigation }) => {
       .then(response => {
         const base64Image = response.data; 
         if (base64Image) {
-          // Construct the data URI
+          //construct the data URI
           const imageUri = `data:image/png;base64,${base64Image}`;
           setProfileImageUri({ uri: imageUri });
         }
@@ -156,6 +156,11 @@ const Profile = ({ route, navigation }) => {
     // Navigate back to MainPage with the updated username
     navigation.navigate('MainPage', { username });
   };
+  const handleUpload = async() =>
+  { 
+    console.log('Upload product');
+    navigation.navigate('AddProduct', {formerUsername});
+  }
 
   return (
     <View style={styles.container}>
@@ -237,8 +242,8 @@ const Profile = ({ route, navigation }) => {
       </View>
 
       {/* Buttons Section */}
-      <TouchableOpacity style={styles.button}>
-        <Text style={styles.buttonText}>Upload a product</Text>
+      <TouchableOpacity style={styles.button} onPress={handleUpload}>
+        <Text style={styles.buttonText}>Add a product</Text>
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.button}>

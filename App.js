@@ -12,6 +12,7 @@ import Profile from './Profile';
 import SearchPage from './SearchPage';
 import Messages from './Messages';
 import DirectMessage from './DirectMessage';
+import AddProduct from './AddProduct';
 const Stack = createNativeStackNavigator();
 
 export default function App() {
@@ -98,6 +99,13 @@ export default function App() {
             headerShown: false,
           }} 
         />        
+        <Stack.Screen 
+          name="AddProduct" 
+          component={AddProduct} 
+          options={{
+            headerShown: false,
+          }} 
+        />     
       </Stack.Navigator>
     </NavigationContainer>
   );
