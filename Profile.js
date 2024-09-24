@@ -128,7 +128,7 @@ const Profile = ({ route, navigation }) => {
 
   const handleSave = async () => {
     if (!username || !email || (password && password !== confirmPassword)) {
-      Alert.alert('Please fill out all fields and make sure passwords match.');
+      alert('Please fill out all fields and make sure passwords match.');
       return;
     }
 
@@ -158,8 +158,7 @@ const Profile = ({ route, navigation }) => {
   };
   const handleUpload = async() =>
   { 
-    console.log('Upload product');
-    navigation.navigate('AddProduct', {formerUsername});
+    navigation.navigate('AddProduct', { username: formerUsername });
   }
 
   return (

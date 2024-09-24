@@ -1,9 +1,6 @@
 package bujii.be.domain.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,8 +16,8 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 public class Product {
     @Id
-//    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "product_seq_gen")
-//    @SequenceGenerator(name = "product_seq_gen", sequenceName = "product_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "product_seq_gen")
+    @SequenceGenerator(name = "product_seq_gen", sequenceName = "product_id_seq", allocationSize = 1)
     @Column
     Integer id;
 

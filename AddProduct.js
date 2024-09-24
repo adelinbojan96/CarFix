@@ -1,19 +1,39 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, CheckBox } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { 
+  View, Text, TextInput, TouchableOpacity, StyleSheet, 
+  Image, CheckBox, Alert, Platform 
+} from 'react-native';
+import axios from 'axios';
+import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 
 const AddProduct = ({ route, navigation }) => {
   const { username } = route.params;
   const [productName, setProductName] = useState('');
   const [productDescription, setProductDescription] = useState('');
   const [price, setPrice] = useState('');
-  const [quantity, setQuantity] = useState(''); // New state for quantity
+  const [quantity, setQuantity] = useState('');
   const [selectedFirm, setSelectedFirm] = useState('');
   const [imageUri, setImageUri] = useState(null);
-  const [firms, setFirms] = useState([
-    { label: 'Audi', checked: false },
-    { label: 'Mercedes', checked: false },
-    { label: 'Dacia', checked: false }
-  ]);
+  const [firms, setFirms] = useState([]); 
+
+  // Fetch firms from the database when the component mounts
+  useEffect(() => {
+    axios.get('http://localhost:8082/api/brands')
+      .then(response => {
+        if (Array.isArray(response.data)) {
+          const fetchedFirms = response.data.map(firm => ({
+            label: firm.name,
+            checked: false
+          }));
+          setFirms(fetchedFirms);
+        } else {
+          console.error('Expected an array, but got something else:', response.data);
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching firms:', error);
+      });
+  }, []);
 
   const handleFirmSelection = (index) => {
     const updatedFirms = firms.map((firm, i) => ({
@@ -21,19 +41,80 @@ const AddProduct = ({ route, navigation }) => {
       checked: i === index
     }));
     setFirms(updatedFirms);
-    setSelectedFirm(firms[index].label);
+    setSelectedFirm(updatedFirms[index].label); // Update the selected firm
   };
 
   const handleChoosePhoto = () => {
-    // code to choose a photo from gallery
+    launchImageLibrary({ mediaType: 'photo' }, (response) => {
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.errorCode) {
+        console.error('ImagePicker Error: ', response.errorMessage);
+      } else if (response.assets && response.assets.length > 0) {
+        const uri = response.assets[0].uri;
+        setImageUri(uri); // Update the image URI
+      }
+    });
   };
 
-  const handleSaveProduct = () => {
-    // code to save the product
-    console.log('Product saved:', { productName, productDescription, price, quantity, selectedFirm });
+  const handleTakePhoto = () => {
+    launchCamera({ mediaType: 'photo' }, (response) => {
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.errorCode) {
+        console.error('ImagePicker Error: ', response.errorMessage);
+      } else if (response.assets && response.assets.length > 0) {
+        const uri = response.assets[0].uri;
+        setImageUri(uri); // Update the image URI
+      }
+    });
+  };
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setImageFile(file); // Store the File object for upload
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImageUri(reader.result); // Show the selected image
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+  const handleSaveProduct = async () => {
+    //validate form fields and firm selection
+    if (!productName || !productDescription || !price || !quantity || !selectedFirm) {
+      alert('All fields are required! Please fill all fields and select a firm before submitting.');
+      return;
+    }
 
-    // navigate to MainPage
-    navigation.navigate('MainPage', { username });
+    try {
+      const formData = new FormData();
+      formData.append('title', productName);
+      formData.append('description', productDescription);
+      formData.append('price', price);
+      formData.append('quantity', quantity);
+      formData.append('firm', selectedFirm);
+      formData.append('username', username);
+      if (imageUri) {
+        formData.append('image', {
+          uri: imageUri,
+          type: 'image/png', // Change as needed based on image type
+          name: 'product_image.png', // Change as needed
+        });
+      }
+
+      await axios.post('http://localhost:8082/api/products/upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      alert('Product saved successfully');
+      navigation.navigate('MainPage', { username });
+    } catch (error) {
+      console.error('Error saving product:', error.response ? error.response.data : error.message);
+      alert('Failed to save product');
+    }
   };
 
   return (
@@ -68,7 +149,6 @@ const AddProduct = ({ route, navigation }) => {
           keyboardType="numeric"
         />
 
-        {/* New Quantity Input */}
         <Text style={styles.label}>Quantity</Text>
         <TextInput 
           style={styles.input} 
@@ -96,13 +176,23 @@ const AddProduct = ({ route, navigation }) => {
             <Text style={styles.label}>Image</Text>
             <TouchableOpacity onPress={handleChoosePhoto}>
               <Image 
-                source={imageUri ? { uri: imageUri } : require('./assets/sir_alex.png')} 
+                source={imageUri ? { uri: imageUri } : require('./BujiiBE/src/main/resources/static/no-image.png')} // Adjust path accordingly
                 style={styles.productImage} 
               />
-               <Text style={styles.editPictureText}>Edit picture</Text>
+              <Text style={styles.editPictureText}>Edit picture</Text>
             </TouchableOpacity>
           </View>
         </View>
+
+        {Platform.OS === 'web' && (
+          <input
+            type="file"
+            id="fileInput"
+            style={{ display: 'none' }}
+            accept="image/*"
+            onChange={handleFileChange}
+          />
+        )}
 
         <TouchableOpacity style={styles.saveButton} onPress={handleSaveProduct}>
           <Text style={styles.saveButtonText}>Save Product</Text>
@@ -122,7 +212,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 20,
+    marginBottom: 1, //should be 20
     backgroundColor: '#a6b2b9', 
     padding: 20, 
     borderRadius: 10,

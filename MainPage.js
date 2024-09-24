@@ -7,15 +7,14 @@ import {
 const MainPage = ({ navigation, route }) => {
   const { username } = route.params;
 
-  const [profileImageUri, setProfileImageUri] = useState(null); // No default image
+  const [profileImageUri, setProfileImageUri] = useState(null);
 
   useEffect(() => {
-    // Fetch the profile image based on the username
+    //fetch profile image based on username
     axios.get(`http://localhost:8082/users/profile-image?username=${username}`)
       .then(response => {
         const base64Image = response.data; 
         if (base64Image) {
-          // Construct the data URI
           const imageUri = `data:image/png;base64,${base64Image}`;
           setProfileImageUri({ uri: imageUri });
         }
@@ -24,7 +23,6 @@ const MainPage = ({ navigation, route }) => {
         console.error('Error fetching profile image:', error);
       });
 
-    // Set the navigation options dynamically based on the username and profile image
     navigation.setOptions({
       headerTitle: `Welcome, ${username}`,
       headerTitleAlign: 'center',
@@ -40,7 +38,7 @@ const MainPage = ({ navigation, route }) => {
         <TouchableOpacity onPress={() => navigation.navigate('Profile', { formerUsername: username })}>
           {profileImageUri ? (
             <Image 
-              source={profileImageUri} // Use the fetched profile image
+              source={profileImageUri} 
               style={styles.avatar}
             />
           ) : (

@@ -1,6 +1,7 @@
 package bujii.be.domain.dto;
 
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
 
 @Data
 public class ProductCreateDto {
@@ -10,5 +11,5 @@ public class ProductCreateDto {
     Integer quantity;
     String firm;
     String username;
-    byte[] image;
+    MultipartFile image;
 }
