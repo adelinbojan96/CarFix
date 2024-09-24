@@ -1,5 +1,6 @@
 package bujii.be.controller;
 
+import bujii.be.domain.dto.ProductCreateDto;
 import bujii.be.domain.dto.ProductViewDto;
 import bujii.be.service.ProductService;
 import lombok.RequiredArgsConstructor;
@@ -17,5 +18,10 @@ public class ProductController {
     @ResponseStatus(HttpStatus.OK)
     public ProductViewDto[] getAllProducts(){
         return productService.getAllProducts();
+    }
+    @PostMapping("/upload")
+    public void addProduct(@RequestBody ProductCreateDto productCreateDto)
+    {
+        productService.addProduct(productCreateDto);
     }
 }
