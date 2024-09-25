@@ -27,13 +27,25 @@ public class FirmDaoImpl implements FirmDao {
         }
         return firms;
     }
+
+    @Override
+    public Firm getFirmByName(String firmName) {
+        List<Firm> firmList = firmRepository.findAll();
+        for (Firm firm:
+                firmList) {
+            if(firmName.equals(firm.getName())) {
+                return firm;
+            }
+        }
+        return null;
+    }
 }
 /**
  *----
  * Facultate + nota
  * 3 puncte forte
  * 1 bug/problema pe care am avut-o + cum i-am fata
- * ultima carte citita in domeniu - Ursul pacalit de vulpe
+ * ultima carte citita in domeniu - Ursul pacalit de vulpe :))))
  * -----
  * Authentication vs Authorization
  * Java data structure: List, Queueu, Stack, Map ( + ceva caracteristic lor )

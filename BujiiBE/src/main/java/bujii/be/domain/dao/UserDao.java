@@ -9,4 +9,8 @@ public interface UserDao {
     void register(UserCreateDto userCreateDto);
 
     void editProfile(String formerUsername, UserCreateDto userCreateDto);
+
+    void saveProfileImage(User user, byte[] image);
+
+    void becomeSeller(User user);
 }

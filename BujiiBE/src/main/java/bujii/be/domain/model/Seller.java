@@ -7,25 +7,17 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "firm")
+@Table(name = "sellers")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Firm {
+public class Seller {
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seller_seq_gen")
+    @SequenceGenerator(name = "seller_seq_gen", sequenceName = "seller_id_seq", allocationSize = 1)
     @Column
     Integer id;
-
     @Column
-    String name;
-
-    @Column
-    String description;
-
-    @Column
-    Integer createdAt;
-
-    @Column
-    byte[] image;
+    Integer id_user;
 }

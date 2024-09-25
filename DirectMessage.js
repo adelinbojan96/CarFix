@@ -1,34 +1,35 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Image, ScrollView, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, Keyboard } from 'react-native';
 
-const messagesData = [
-  {
-    id: 1,
-    sender: 'idk',
-    text: 'Nu te supara, ai zis ca vrei sa ti dau bujia.',
-    time: 'mon, 7:24',
-    senderAvatar: 'https://via.placeholder.com/20',
-  },
-  {
-    id: 2,
-    sender: 'Janos Varga',
-    text: 'N-am dc sa ma supar, numa cred ca esti tepar.',
-    time: 'tue, 9:42',
-    senderAvatar: 'https://via.placeholder.com/20',
-  },
-  {
-    id: 3,
-    sender: 'idk',
-    text: 'Am produse vandute la mai multa lume, nu doar tie. Uita-te la rating pe profil. Hai noroc si trai bun familiei. 👌👍👍',
-    time: 'wed, 14:42',
-    senderAvatar: 'https://via.placeholder.com/20',
-  },
-];
-
 const DirectMessage = ({ route }) => {
-  const { contactName, username } = route.params;  
+  const { contactName, username } = route.params; // Destructure username from route.params
 
   const [keyboardVisible, setKeyboardVisible] = useState(false);
+
+  // Define messagesData with the username after it has been passed via route
+  const messagesData = [
+    {
+      id: 1,
+      sender: username,
+      text: 'Nu te supara, ai zis ca vrei sa ti dau bujia.',
+      time: 'mon, 7:24',
+      senderAvatar: 'https://via.placeholder.com/20',
+    },
+    {
+      id: 2,
+      sender: 'Janos Varga',
+      text: 'N-am dc sa ma supar, numa cred ca esti tepar.',
+      time: 'tue, 9:42',
+      senderAvatar: 'https://via.placeholder.com/20',
+    },
+    {
+      id: 3,
+      sender: username,
+      text: 'Am produse vandute la mai multa lume, nu doar tie. Uita-te la rating pe profil. Hai noroc si trai bun familiei. 👌👍👍',
+      time: 'wed, 14:42',
+      senderAvatar: 'https://via.placeholder.com/20',
+    },
+  ];
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(

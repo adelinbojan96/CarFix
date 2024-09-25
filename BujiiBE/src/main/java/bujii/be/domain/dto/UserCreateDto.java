@@ -7,4 +7,5 @@ public class UserCreateDto {
     String username;
     String email;
     String password;
+    byte[] picture;
 }
