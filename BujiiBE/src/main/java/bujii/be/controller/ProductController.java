@@ -4,12 +4,9 @@ import bujii.be.domain.dto.ProductCreateDto;
 import bujii.be.domain.dto.ProductViewDto;
 import bujii.be.service.ProductService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
-import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 
 @CrossOrigin
 @RestController

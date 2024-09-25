@@ -31,13 +31,11 @@ public class FirmDaoImpl implements FirmDao {
     @Override
     public Firm getFirmByName(String firmName) {
         List<Firm> firmList = firmRepository.findAll();
-        int i = 0;
         for (Firm firm:
                 firmList) {
             if(firmName.equals(firm.getName())) {
                 return firm;
             }
-            i++;
         }
         return null;
     }

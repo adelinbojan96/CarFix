@@ -10,5 +10,7 @@ public interface UserDao {
 
     void editProfile(String formerUsername, UserCreateDto userCreateDto);
 
-    void saveUser(User user);
+    void saveProfileImage(User user, byte[] image);
+
+    void becomeSeller(User user);
 }

@@ -153,14 +153,23 @@ const Profile = ({ route, navigation }) => {
       alert('Failed to update profile');
     }
 
-    // Navigate back to MainPage with the updated username
     navigation.navigate('MainPage', { username });
   };
   const handleUpload = async() =>
   { 
     navigation.navigate('AddProduct', { username: formerUsername });
   }
-
+  const handleBecomeSeller = async() =>
+  {
+      try {
+      await axios.post(`http://localhost:8082/users/seller?username=${formerUsername}`);
+      console.log('User has become a seller');
+      alert('You just have become a seller');
+    } catch (error) {
+      console.error('Error becoming a seller:', error);
+      alert('Failed to become a seller');
+    }
+  }
   return (
     <View style={styles.container}>
       {/* Profile Header */}
@@ -245,7 +254,7 @@ const Profile = ({ route, navigation }) => {
         <Text style={styles.buttonText}>Add a product</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.button}>
+      <TouchableOpacity style={styles.button} onPress={handleBecomeSeller}>
         <Text style={styles.buttonText}>Become a seller</Text>
       </TouchableOpacity>
     </View>
@@ -264,7 +273,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 20,
+    marginBottom: 1, //should be 20
     backgroundColor: '#a6b2b9', 
     padding: 20, 
     borderRadius: 10,
@@ -301,7 +310,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderWidth: 1,
     borderColor: '#000',
-    marginBottom: 40, 
+    marginBottom: 20, //should be 40
   },
   inputGroup: {
     marginBottom: 15,
@@ -323,7 +332,7 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 20,
     alignItems: 'center',
-    marginTop: 20,
+    marginTop: 1, //should be 20
     borderWidth: 1,
     borderColor: '#000',
   },

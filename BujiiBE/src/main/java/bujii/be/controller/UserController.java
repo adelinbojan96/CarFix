@@ -68,7 +68,7 @@ public class UserController {
     }
 
     @PostMapping("/seller")
-    public void setUserAsSeller(@RequestBody String username) {
+    public void setUserAsSeller(@RequestParam String username) {
         userService.setUserAsSeller(username);
     }
 }

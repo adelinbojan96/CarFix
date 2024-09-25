@@ -1,6 +1,5 @@
 package bujii.be.domain.dao;
 
-import bujii.be.domain.dto.FirmViewDto;
 import bujii.be.domain.dto.ProductCreateDto;
 import bujii.be.domain.dto.ProductViewDto;
 import bujii.be.domain.model.Firm;

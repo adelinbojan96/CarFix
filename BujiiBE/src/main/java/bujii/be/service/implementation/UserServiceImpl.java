@@ -63,8 +63,7 @@ public class UserServiceImpl implements UserService {
         }
         //conversion of multipart to byte
         byte[] imageData = file.getBytes();
-        user.setPicture(imageData);
-        userDao.saveUser(user);
+        userDao.saveProfileImage(user, imageData);
     }
 
     @Override
@@ -76,7 +75,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void setUserAsSeller(String username) {
         User user = userDao.findByUsername(username);
-        user.setRole("Seller");
-        userDao.saveUser(user);
+        if(Objects.equals(user.getRole(), "Buyer"))
+            userDao.becomeSeller(user);
     }
 }
