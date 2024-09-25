@@ -66,4 +66,9 @@ public class UserController {
         String base64Image = Base64.getEncoder().encodeToString(image);
         return ResponseEntity.ok().contentType(MediaType.IMAGE_PNG).body(base64Image);
     }
+
+    @PostMapping("/seller")
+    public void setUserAsSeller(@RequestBody String username) {
+        userService.setUserAsSeller(username);
+    }
 }

@@ -29,7 +29,7 @@ public class UserDaoImpl implements UserDao {
         User user = userMapper.toEntity(userCreateDto);
         user.setRole("Buyer");
         user.setCreated_at(Timestamp.from(Instant.now()));
-
+        
         userRepository.save(user);
     }
 

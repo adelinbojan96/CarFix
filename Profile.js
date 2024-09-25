@@ -13,9 +13,9 @@ const Profile = ({ route, navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [profileImageUri, setProfileImageUri] = useState(null);  // No default image
-  const [newProfileImageUri, setNewProfileImageUri] = useState(null); // For mobile
-  const [newProfileImageFile, setNewProfileImageFile] = useState(null); // For web
+  const [profileImageUri, setProfileImageUri] = useState(null);  //no default image
+  const [newProfileImageUri, setNewProfileImageUri] = useState(null); //for mobile
+  const [newProfileImageFile, setNewProfileImageFile] = useState(null); //for web
 
   useEffect(() => {
     axios.get(`http://localhost:8082/users/profile-image?username=${formerUsername}`)
@@ -115,7 +115,7 @@ const Profile = ({ route, navigation }) => {
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (file) {
-      setNewProfileImageFile(file); // Store the File object for upload
+      setNewProfileImageFile(file); //store the File object for upload
       const reader = new FileReader();
       reader.onloadend = () => {
         const base64Image = reader.result.split(',')[1];

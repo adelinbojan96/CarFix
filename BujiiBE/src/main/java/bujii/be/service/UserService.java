@@ -17,4 +17,6 @@ public interface UserService {
     void saveProfileImage(String username, MultipartFile file) throws IOException;
 
     byte[] loadImageFromDatabase(String username);
+
+    void setUserAsSeller(String username);
 }

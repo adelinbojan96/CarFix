@@ -72,4 +72,11 @@ public class UserServiceImpl implements UserService {
         User user = userDao.findByUsername(username);
         return user.getPicture();
     }
+
+    @Override
+    public void setUserAsSeller(String username) {
+        User user = userDao.findByUsername(username);
+        user.setRole("Seller");
+        userDao.saveUser(user);
+    }
 }

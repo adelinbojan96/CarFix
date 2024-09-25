@@ -1,19 +1,21 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
-import { 
-  View, Text, Image, StyleSheet, ScrollView, TouchableOpacity 
-} from 'react-native';
+import React, { useEffect, useState, useRef } from 'react';
+import { Animated, Easing, View, Text, Image, StyleSheet, ScrollView, TouchableOpacity, TextInput } from 'react-native';
 
 const MainPage = ({ navigation, route }) => {
   const { username } = route.params;
 
   const [profileImageUri, setProfileImageUri] = useState(null);
+  const searchBarWidth = useRef(new Animated.Value(0)).current; 
+  const [searchExpanded, setSearchExpanded] = useState(false); 
+  const [searchText, setSearchText] = useState('');
+  const [searchBarColor, setSearchBarColor] = useState('#a6b2b9');
+  const [isFocused, setIsFocused] = useState(false);
 
   useEffect(() => {
-    //fetch profile image based on username
     axios.get(`http://localhost:8082/users/profile-image?username=${username}`)
       .then(response => {
-        const base64Image = response.data; 
+        const base64Image = response.data;
         if (base64Image) {
           const imageUri = `data:image/png;base64,${base64Image}`;
           setProfileImageUri({ uri: imageUri });
@@ -24,10 +26,29 @@ const MainPage = ({ navigation, route }) => {
       });
 
     navigation.setOptions({
-      headerTitle: `Welcome, ${username}`,
+      headerTitle: () => (
+        <Animated.View style={[styles.searchContainer, { width: searchBarWidth, backgroundColor: searchBarColor }]}>
+          {searchExpanded ? (
+            <>
+              <TextInput
+                style={styles.searchInput}
+                placeholder="Type here..."
+                value={searchText}
+                onChangeText={setSearchText}
+              />
+              <TouchableOpacity onPress={handleSearchSubmit}>
+                <Image 
+                  source={require('./assets/send_icon.png')} 
+                  style={styles.sendIcon}
+                />
+              </TouchableOpacity>
+            </>
+          ) : null }
+        </Animated.View>
+      ),
       headerTitleAlign: 'center',
       headerLeft: () => (
-        <TouchableOpacity onPress={() => navigation.navigate('SearchPage')}>
+        <TouchableOpacity onPress={toggleSearchBar}>
           <Image 
             source={require('./assets/search.png')} 
             style={styles.searchIcon}
@@ -47,11 +68,11 @@ const MainPage = ({ navigation, route }) => {
         </TouchableOpacity>
       ),
       headerStyle: {
-        backgroundColor: '#a6b2b9', 
+        backgroundColor: '#a6b2b9',
         height: 150,
       },
     });
-  }, [username, profileImageUri, navigation]);
+  }, [username, profileImageUri, searchExpanded, searchBarColor]);
 
   const [firms, setFirms] = useState(null);
 
@@ -72,6 +93,34 @@ const MainPage = ({ navigation, route }) => {
   useEffect(() => {
     renderFirms();
   }, []);
+
+  const toggleSearchBar = () => {
+    if (searchExpanded) {
+      setSearchBarColor('#a6b2b9');
+      Animated.timing(searchBarWidth, {
+        toValue: 0, 
+        duration: 300,
+        easing: Easing.linear,
+        useNativeDriver: false
+      }).start(() => setSearchExpanded(false));
+    } else {
+      setSearchExpanded(true); 
+      setSearchBarColor('white');
+      Animated.timing(searchBarWidth, {
+        toValue: 250,
+        duration: 300,
+        easing: Easing.linear,
+        useNativeDriver: false
+      }).start();
+    }
+  };
+
+  const handleSearchSubmit = () => {
+    if (searchText.trim()) {
+      navigation.navigate('SearchPage', { searchText });
+    }
+    toggleSearchBar();
+  };
 
   return (
     <View style={{ flex: 1 }}>
@@ -116,7 +165,6 @@ const MainPage = ({ navigation, route }) => {
           style={styles.messageIcon}
         />
       </TouchableOpacity>
-
     </View>
   );
 };
@@ -126,6 +174,32 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     padding: 16, 
     backgroundColor: '#f0f0f0',
+  },
+  searchContainer: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  borderRadius: 10,
+  paddingLeft: 10,
+  overflow: 'hidden',
+  height: 40,
+  justifyContent: 'center', 
+  borderWidth: 0,     
+  boxShadow: 'none',
+  },
+  searchInput: {
+  flex: 1,
+  height: 40,
+  paddingLeft: 10,
+  paddingRight: 10,
+  borderRadius: 20,
+  outline: 'none',    
+  borderWidth: 0,     
+  boxShadow: 'none',  
+  },
+  sendIcon: {
+    width: 30,
+    height: 30,
+    marginLeft: 10,
   },
   titleContainer: {
     alignSelf: 'stretch', 

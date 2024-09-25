@@ -7,7 +7,6 @@ import axios from 'axios';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import Checkbox from '@react-native-community/checkbox';
 
-// Create a CheckboxComponent that works on both web and mobile platforms
 const CheckboxComponent = Platform.OS === 'web' 
   ? ({ value, onValueChange }) => (
       <input type="checkbox" checked={value} onChange={e => onValueChange(e.target.checked)} />
@@ -16,19 +15,18 @@ const CheckboxComponent = Platform.OS === 'web'
 
 const AddProduct = ({ route, navigation }) => {
   const { username } = route.params;
-  
-  // State variables
+
   const [productName, setProductName] = useState('');
   const [productDescription, setProductDescription] = useState('');
   const [price, setPrice] = useState('');
   const [quantity, setQuantity] = useState('');
   const [selectedFirm, setSelectedFirm] = useState('');
-  const [imageUri, setImageUri] = useState(null); // For image preview
-  const [imageFile, setImageFile] = useState(null); // For image upload
+  const [imageUri, setImageUri] = useState(null); //for image preview
+  const [imageFile, setImageFile] = useState(null); //for image upload
   const [firms, setFirms] = useState([]); 
 
   useEffect(() => {
-    // Fetch firms from backend
+    //fetch firms from backend
     axios.get('http://localhost:8082/api/brands')
       .then(response => {
         if (Array.isArray(response.data)) {
@@ -46,7 +44,6 @@ const AddProduct = ({ route, navigation }) => {
       });
   }, []);
 
-  // Handle firm selection
   const handleFirmSelection = (index) => {
     const updatedFirms = firms.map((firm, i) => ({
       ...firm,
@@ -56,7 +53,6 @@ const AddProduct = ({ route, navigation }) => {
     setSelectedFirm(updatedFirms[index].label);
   };
 
-  // Handle image selection from library
   const handleChoosePhoto = () => {
     if (Platform.OS === 'web') {
       document.getElementById('fileInput').click();
@@ -76,7 +72,7 @@ const AddProduct = ({ route, navigation }) => {
     }
   };
 
-  // Handle file selection on web
+  //handle file selection on web
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -89,8 +85,6 @@ const AddProduct = ({ route, navigation }) => {
       reader.readAsDataURL(file);
     }
   };
-
-  // Handle saving the product
   const handleSaveProduct = async () => {
     if (!productName || !productDescription || !price || !quantity || !selectedFirm) {
       alert('All fields are required! Please fill all fields and select a firm before submitting.');
@@ -290,7 +284,7 @@ const styles = StyleSheet.create({
   },
   productImage: {
     width: 200,
-    height: 200, // Increased height for better visibility
+    height: 100,
     resizeMode: 'contain',
     marginTop: 10,
     borderWidth: 1,
