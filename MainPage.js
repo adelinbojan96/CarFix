@@ -116,7 +116,7 @@ const MainPage = ({ navigation, route }) => {
 
   const handleSearchSubmit = () => {
     if (searchText.trim()) {
-      navigation.navigate('SearchPage', { username, category: 'Search', searchText });
+      navigation.navigate('SearchPage', { username, criteria: 'Search', searchText });
     }
     toggleSearchBar();
   };
@@ -140,7 +140,7 @@ const MainPage = ({ navigation, route }) => {
                   <TouchableOpacity 
                     key={index} 
                     style={styles.brandBox} 
-                    onPress={() => navigation.navigate('SearchPage', { username, category: 'Category', searchText: element.name })}>
+                    onPress={() => navigation.navigate('SearchPage', { username, criteria: 'Category', searchText: element.name })}>
                     <Image 
                       source={{ uri: base64Image }} 
                       style={styles.brandImage}

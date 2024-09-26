@@ -15,16 +15,22 @@ import org.springframework.web.bind.annotation.*;
 public class ProductController {
     private final ProductService productService;
 
-    @GetMapping("")
-    @ResponseStatus(HttpStatus.OK)
-    public ProductViewDto[] getAllProducts(){
-        return productService.getAllProducts();
-    }
-
     @PostMapping("/upload")
     @ResponseStatus(HttpStatus.CREATED)
     public void addProduct(@ModelAttribute ProductCreateDto productCreateDto) {
         System.out.println(productCreateDto);
         productService.addProduct(productCreateDto);
+    }
+    @GetMapping("/retrieveName")
+    @ResponseStatus(HttpStatus.OK)
+    public ProductViewDto[] getProductsByName(@RequestParam String text) {
+        System.out.println(text);
+        return productService.retrieveByName(text);
+    }
+    @GetMapping("/retrieveCategory")
+    @ResponseStatus(HttpStatus.OK)
+    public ProductViewDto[] getProductsByCategory(@RequestParam String text) {
+        System.out.println(text);
+        return productService.retrieveByCategory(text);
     }
 }

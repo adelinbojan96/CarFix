@@ -8,6 +8,8 @@ import bujii.be.domain.model.Firm;
 import bujii.be.domain.model.Product;
 import bujii.be.domain.model.User;
 import bujii.be.repository.ProductRepository;
+import bujii.be.repository.SellerRepository;
+import bujii.be.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
@@ -22,18 +24,27 @@ import java.util.List;
 public class ProductDaoImpl implements ProductDao {
     private final ProductMapper productMapper;
     private final ProductRepository productRepository;
+    private final SellerRepository sellerRepository;
+    private final UserRepository userRepository;
 
-    @Override
-    public ProductViewDto[] getAllProducts() {
-        List<Product> productList = productRepository.findAll();
-        ProductViewDto[] products = new ProductViewDto[productList.size()];
-        int i = 0;
-        for (Product product :
-                productList) {
-            products[i] = productMapper.toViewDto(product);
-            i++;
+
+    private byte[] loadImageOrDefault(ProductCreateDto productCreateDto) {
+        byte[] image;
+        if (productCreateDto.getImage() == null) {
+            ClassPathResource defaultImageResource = new ClassPathResource("static/no-image.png");
+            try {
+                image = StreamUtils.copyToByteArray(defaultImageResource.getInputStream());
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to load default image", e);
+            }
+        } else {
+            try {
+                image = productCreateDto.getImage().getBytes();
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to read image bytes", e);
+            }
         }
-        return products;
+        return image;
     }
 
     @Override
@@ -50,24 +61,39 @@ public class ProductDaoImpl implements ProductDao {
         product.setUser_id(id_user);
         product.setFirm_id(id_firm);
 
-        if (productCreateDto.getImage() == null) {
-            byte[] image;
-            ClassPathResource defaultImageResource = new ClassPathResource("static/no-image.png");
-            try {
-                image = StreamUtils.copyToByteArray(defaultImageResource.getInputStream());
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            product.setImage(image);
-        } else {
-            byte[] image;
-            try {
-                image = productCreateDto.getImage().getBytes();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            product.setImage(image);
-        }
+        product.setImage(loadImageOrDefault(productCreateDto));
+
         productRepository.save(product);
+    }
+
+    private ProductViewDto[] retrieveProductsByCriteria(List<Product> productList)
+    {
+        ProductViewDto[] products = new ProductViewDto[productList.size()];
+
+        for (int i = 0; i < productList.size(); i++) {
+            Product product = productList.get(i);
+            products[i] = productMapper.toViewDto(product);
+
+            int finalI = i;
+            sellerRepository.findById(product.getUser_id())
+                    .flatMap(seller -> userRepository.findById(seller.getId_user()))
+                    .ifPresent(user -> {
+                        products[finalI].setSeller_name(user.getUsername());
+                        products[finalI].setSeller_picture(user.getPicture());
+                    });
+        }
+
+        return products;
+    }
+
+    @Override
+    public ProductViewDto[] getProductsByName(String text) {
+        List<Product> productList = productRepository.findByName(text);
+        return retrieveProductsByCriteria(productList);
+    }
+    @Override
+    public ProductViewDto[] getProductsByCategory(String text) {
+        List<Product> productList = productRepository.findByCategory(text);
+        return retrieveProductsByCriteria(productList);
     }
 }
