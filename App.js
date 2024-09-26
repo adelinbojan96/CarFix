@@ -55,7 +55,7 @@ export default function App() {
           name="MainPage" 
           component={MainPage} 
           options={{ 
-            headerTitle: 'Hello, Sir Alex',
+            headerTitle: ' ',
             headerTitleAlign: 'center',
             headerStyle: {
               backgroundColor: '#a6b2b9',
@@ -77,12 +77,28 @@ export default function App() {
           }}
         />
         <Stack.Screen 
+          name="AddProduct" 
+          component={AddProduct} 
+          options={{
+            headerTitle: 'Add your product',
+            headerTitleAlign: 'center',
+            headerShown: false,
+          }} 
+        /> 
+        <Stack.Screen 
           name="SearchPage" 
           component={SearchPage} 
           options={{
-            headerTitle: 'Search',
+            headerTitle: 'Market Products',
             headerTitleAlign: 'center',
-            headerShown: false
+            headerStyle: {
+              backgroundColor: '#a6b2b9',
+              height: 150,
+            },
+            headerTitleStyle: {
+              fontSize: 24,
+            },
+            headerLeft: null,
           }}
         />
         <Stack.Screen 
@@ -98,14 +114,7 @@ export default function App() {
           options={{
             headerShown: false,
           }} 
-        />        
-        <Stack.Screen 
-          name="AddProduct" 
-          component={AddProduct} 
-          options={{
-            headerShown: false,
-          }} 
-        />     
+        />            
       </Stack.Navigator>
     </NavigationContainer>
   );

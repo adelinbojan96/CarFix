@@ -15,8 +15,11 @@ import bujii.be.repository.SellerRepository;
 import bujii.be.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StreamUtils;
 
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.time.Instant;
 
@@ -41,6 +44,15 @@ public class UserDaoImpl implements UserDao {
         User user = userMapper.toEntity(userCreateDto);
         user.setRole("Buyer");
         user.setCreated_at(Timestamp.from(Instant.now()));
+
+        byte[] image;
+        ClassPathResource defaultImageResource = new ClassPathResource("static/no-image.png");
+        try {
+            image = StreamUtils.copyToByteArray(defaultImageResource.getInputStream());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        user.setPicture(image);
 
         userRepository.save(user);
 
