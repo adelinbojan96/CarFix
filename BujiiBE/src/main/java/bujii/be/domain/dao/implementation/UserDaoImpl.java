@@ -46,7 +46,7 @@ public class UserDaoImpl implements UserDao {
         user.setCreated_at(Timestamp.from(Instant.now()));
 
         byte[] image;
-        ClassPathResource defaultImageResource = new ClassPathResource("static/no-image.png");
+        ClassPathResource defaultImageResource = new ClassPathResource("static/default_user.png");
         try {
             image = StreamUtils.copyToByteArray(defaultImageResource.getInputStream());
         } catch (IOException e) {

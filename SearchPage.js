@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Image, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
+import { View, Text, Image, StyleSheet, ScrollView, ActivityIndicator, TouchableOpacity } from 'react-native';
 import axios from 'axios';
+import { useNavigation } from '@react-navigation/native';
 
 const SearchPage = ({ route }) => {
   const { username, criteria, searchText } = route.params;
-
+  const navigation = useNavigation();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -59,6 +60,7 @@ const SearchPage = ({ route }) => {
       </View>
     );
   }
+
   const pageTitle =
     criteria === 'Category'
       ? `${searchText} Products`
@@ -74,7 +76,11 @@ const SearchPage = ({ route }) => {
 
         <ScrollView contentContainerStyle={styles.productList}>
           {products.map((product, index) => (
-            <View key={index} style={styles.productCard}>
+            <TouchableOpacity 
+              key={index} 
+              style={styles.productCard} 
+              onPress={() => navigation.navigate('InspectProduct', { product, username})}
+            >
               <Image
                 style={styles.productImage}
                 source={{ uri: `data:image/png;base64,${product.image}` }}
@@ -83,7 +89,7 @@ const SearchPage = ({ route }) => {
                 <Text style={styles.productTitle}>{product.title}</Text>
                 <Text style={styles.productSubtitle}>{formatDate(product.created_at)}</Text>
               </View>
-            </View>
+            </TouchableOpacity>
           ))}
         </ScrollView>
       </View>
@@ -143,24 +149,27 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   productImage: {
-    width: 80,
-    height: 80,
+    width: 150,
+    height: 100,
     marginRight: 15,
     borderRadius: 10,
   },
   productTextContainer: {
     flex: 1,
     justifyContent: 'center',
+    alignItems: 'center', 
   },
   productTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 5,
     color: '#333',
+    textAlign: 'center', 
   },
   productSubtitle: {
     fontSize: 14,
     color: '#555',
+    textAlign: 'center', 
   },
   loadingContainer: {
     flex: 1,

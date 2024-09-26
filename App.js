@@ -13,6 +13,7 @@ import SearchPage from './SearchPage';
 import Messages from './Messages';
 import DirectMessage from './DirectMessage';
 import AddProduct from './AddProduct';
+import InspectProduct from './InspectProduct';
 const Stack = createNativeStackNavigator();
 
 export default function App() {
@@ -114,6 +115,22 @@ export default function App() {
           options={{
             headerShown: false,
           }} 
+        />
+        <Stack.Screen
+          name="InspectProduct"
+          component={InspectProduct}
+          options={{
+            headerTitle: 'Purchase product',
+            headerTitleAlign: 'center',
+            headerStyle: {
+              backgroundColor: '#a6b2b9',
+              height: 150,
+            },
+            headerTitleStyle: {
+              fontSize: 24,
+            },
+            headerLeft: null,
+          }}
         />            
       </Stack.Navigator>
     </NavigationContainer>
