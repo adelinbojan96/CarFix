@@ -12,6 +12,7 @@ import bujii.be.domain.model.Buyer;
 import bujii.be.domain.model.Seller;
 import bujii.be.domain.model.User;
 import bujii.be.repository.BuyerRepository;
+import bujii.be.repository.MessageRepository;
 import bujii.be.repository.SellerRepository;
 import bujii.be.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;

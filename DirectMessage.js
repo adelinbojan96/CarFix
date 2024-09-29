@@ -4,37 +4,12 @@ import axios from 'axios';
 
 
 const DirectMessage = ({ route }) => {
-  // const messagesData = [
-  //   {
-  //     id: 1,
-  //     sender: 'idk',
-  //     text: 'Nu te supara, ai zis ca vrei sa ti dau bujia.',
-  //     time: 'mon, 7:24',
-  //     senderAvatar: 'https://via.placeholder.com/20',
-  //   },
-  //   {
-  //     id: 2,
-  //     sender: 'Janos Varga',
-  //     text: 'N-am dc sa ma supar, numa cred ca esti tepar.',
-  //     time: 'tue, 9:42',
-  //     senderAvatar: 'https://via.placeholder.com/20',
-  //   },
-  //   {
-  //     id: 3,
-  //     sender: 'idk',
-  //     text: 'Am produse vandute la mai multa lume, nu doar tie. Uita-te la rating pe profil. Hai noroc si trai bun familiei. 👌👍👍',
-  //     time: 'wed, 14:42',
-  //     senderAvatar: 'https://via.placeholder.com/20',
-  //   },
-  // ];
 
   const [messagesData, setMessagesData] = useState(null);
-
   const { contactName, username } = route.params;  
-
   const [keyboardVisible, setKeyboardVisible] = useState(false);
-
   const [message, setMessage] = useState("");
+  const [profileImageUri, setProfileImageUri] = useState(null);
 
   const renderMessages = () => {
     axios.get("http://localhost:8082/messages/conversation?sender="+contactName+"&receiver="+username)
@@ -71,12 +46,6 @@ const DirectMessage = ({ route }) => {
   }, []);
 
 
-  
-
-  useEffect(() => {
-   
-  },[])
-
   const sendMessage = () => {
     axios.post('http://localhost:8082/messages', {
       senderUsername: username,
@@ -90,7 +59,20 @@ const DirectMessage = ({ route }) => {
       console.log(error);
     });
   }
-
+    useEffect(() => {
+    axios.get(`http://localhost:8082/users/profile-image?username=${contactName}`)
+      .then(response => {
+        const base64Image = response.data; 
+        if (base64Image) {
+          //construct the data URI
+          const imageUri = `data:image/png;base64,${base64Image}`;
+          setProfileImageUri({ uri: imageUri });
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching profile image:', error);
+      });
+  }, [contactName]);
  return (
   <KeyboardAvoidingView
     style={{ flex: 1 }}
@@ -99,7 +81,7 @@ const DirectMessage = ({ route }) => {
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.headerText}>{contactName}</Text>
-        <Image source={{ uri: 'https://via.placeholder.com/50' }} style={styles.avatar} />
+        <Image source={profileImageUri} style={styles.avatar} />
       </View>
 
       {messagesData == null ? <Text>"Loading..."</Text> : 

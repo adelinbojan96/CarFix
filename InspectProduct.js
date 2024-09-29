@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Image, StyleSheet, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, Keyboard } from 'react-native';
-
+import axios from 'axios';
 const InspectProduct = ({ route }) => {
   const { product, username } = route.params;
   const [message, setMessage] = useState('');
@@ -19,12 +19,24 @@ const InspectProduct = ({ route }) => {
       keyboardDidHideListener.remove();
     };
   }, []);
-
+  const sendMessage = () => {
+    axios.post('http://localhost:8082/messages', {
+      senderUsername: username,
+      receiverUsername: product.seller_name,
+      message: message
+    })
+    .then(response => {
+      setMessage("");
+    })
+    .catch(error => {
+      console.log(error);
+    });
+  }
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0} // Offset for iOS to avoid overlapping
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0} 
     >
       <View style={styles.container}>
         {/* Product Info Section */}
@@ -64,8 +76,8 @@ const InspectProduct = ({ route }) => {
           <TouchableOpacity
             style={styles.sendButton}
             onPress={() => {
-              console.log('Message sent:', message);
-              setMessage('');
+              setMessage(message);
+              sendMessage();
             }}
           >
             <Text style={styles.sendText}>➤</Text>
@@ -133,12 +145,12 @@ const styles = StyleSheet.create({
   inStock: {
     fontSize: 16,
     color: 'green',
-    marginBottom: 5, // Moved margin-bottom to match placement below title
+    marginBottom: 5, 
   },
   outOfStock: {
     fontSize: 16,
     color: 'red',
-    marginBottom: 5, // Moved margin-bottom to match placement below title
+    marginBottom: 5, 
   },
   inputContainer: {
     flexDirection: 'row',
@@ -147,8 +159,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#f0f0f0',
     borderTopWidth: 1,
     borderColor: '#ddd',
-    position: 'absolute', // Absolute position to stick to bottom
-    bottom: 0, // Align to bottom
+    position: 'absolute', 
+    bottom: 0, 
     left: 0,
     right: 0,
   },

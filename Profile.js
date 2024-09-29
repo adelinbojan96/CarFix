@@ -52,7 +52,7 @@ const Profile = ({ route, navigation }) => {
       }
 
       await axios.post(
-        `http://localhost:8082/users/upload-profile-image?username=${encodeURIComponent(formerUsername)}`,
+        `http://localhost:8082/users/upload-profile-image?username=${encodeURIComponent(username)}`,
         formData,
         {
           headers: {
