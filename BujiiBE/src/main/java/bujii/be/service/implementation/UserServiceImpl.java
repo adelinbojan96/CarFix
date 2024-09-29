@@ -5,6 +5,7 @@ import bujii.be.domain.dao.UserDao;
 import bujii.be.domain.dto.LoginDto;
 import bujii.be.domain.dto.LoginViewDto;
 import bujii.be.domain.dto.UserCreateDto;
+import bujii.be.domain.dto.UserViewDto;
 import bujii.be.domain.model.User;
 import bujii.be.exceptions.LoginError;
 import bujii.be.service.UserService;
@@ -77,5 +78,10 @@ public class UserServiceImpl implements UserService {
         User user = userDao.findByUsername(username);
         if(Objects.equals(user.getRole(), "Buyer"))
             userDao.becomeSeller(user);
+    }
+
+    @Override
+    public UserViewDto[] getAllUsersExceptMe(String username) {
+        return userDao.getAllUsersExceptMe(username);
     }
 }

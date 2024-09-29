@@ -1,31 +1,53 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
-
-const contactsData = [
-  {
-    id: 1,
-    name: 'Janos Varga',
-    role: 'Buyer',
-    messages: 1,
-    avatar: 'https://via.placeholder.com/60', 
-  },
-  {
-    id: 2,
-    name: 'Cosmin Tișe',
-    role: 'Seller',
-    messages: 5,
-    avatar: 'https://via.placeholder.com/60',
-  },
-];
+import axios from 'axios';
 
 const Messages = ({ navigation, route }) => {
   const { username } = route.params; 
+
+  // const contactsData = [
+  //   {
+  //     id: 1,
+  //     name: 'Janos Varga',
+  //     role: 'Buyer',
+  //     messages: 1,
+  //     avatar: 'https://via.placeholder.com/60', 
+  //   },
+  //   {
+  //     id: 2,
+  //     name: 'Cosmin Tișe',
+  //     role: 'Seller',
+  //     messages: 5,
+  //     avatar: 'https://via.placeholder.com/60',
+  //   },
+  // ];
+  
+  const [contactsData,setContactsData] = useState(null);
+
+  const renderContacts = () => {
+    axios.get("http://localhost:8082/users/"+username)
+    .then(response => {
+      if (Array.isArray(response.data)) {
+        setContactsData(response.data);
+      } else {
+        console.error("Expected an array, but got something else:", response.data);
+      }
+    })
+    .catch(error => {
+      console.error("Error fetching firms:", error);
+    });
+  }
+
+  useEffect(()=>{
+    renderContacts();
+  },[])
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.headerText}>Contacts</Text>
       </View>
+      {contactsData == null ? <Text>"Loading..."</Text> : 
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         {contactsData.map((contact) => (
           <TouchableOpacity 
@@ -55,6 +77,7 @@ const Messages = ({ navigation, route }) => {
           </TouchableOpacity>
         ))}
       </ScrollView>
+      }
     </View>
   );
 };

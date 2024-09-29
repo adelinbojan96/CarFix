@@ -6,6 +6,7 @@ import bujii.be.domain.dto.SellerCreateDto;
 import bujii.be.domain.dto.UserCreateDto;
 import bujii.be.domain.mapper.BuyerMapper;
 import bujii.be.domain.mapper.SellerMapper;
+import bujii.be.domain.dto.UserViewDto;
 import bujii.be.domain.mapper.UserMapper;
 import bujii.be.domain.model.Buyer;
 import bujii.be.domain.model.Seller;
@@ -19,6 +20,8 @@ import org.springframework.stereotype.Component;
 
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.List;
+import java.util.Objects;
 
 @Component
 @RequiredArgsConstructor
@@ -30,6 +33,7 @@ public class UserDaoImpl implements UserDao {
     private final BuyerMapper buyerMapper;
     private final SellerRepository sellerRepository;
     private final SellerMapper sellerMapper;
+    private final MessageRepository messageRepository;
 
     @Override
     public User findByUsername(String username) {
@@ -86,5 +90,20 @@ public class UserDaoImpl implements UserDao {
 
         sellerRepository.save(seller);
         userRepository.save(user);
+    }
+
+    @Override
+    public UserViewDto[] getAllUsersExceptMe(String username) {
+        List<User> userList = userRepository.findAll();
+
+        return userList
+                .stream()
+                .filter(u -> !Objects.equals(u.getUsername(), username))
+                .map(userMapper::toUserViewDto)
+                .peek(u -> {
+                    User user = userRepository.findByUsername(u.getName()).orElseThrow(() -> new EntityNotFoundException("User with username %s doesn't exist".formatted(u.getName())));
+                    u.setMessages(messageRepository.numberOfMessages(user.getId()));
+                })
+                .toArray(UserViewDto[]::new);
     }
 }

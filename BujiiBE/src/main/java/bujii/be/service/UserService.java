@@ -6,6 +6,7 @@ import bujii.be.domain.dto.UserCreateDto;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import bujii.be.domain.dto.UserViewDto;
 
 public interface UserService {
     LoginViewDto login(LoginDto loginDto);
@@ -19,4 +20,6 @@ public interface UserService {
     byte[] loadImageFromDatabase(String username);
 
     void setUserAsSeller(String username);
+
+    public UserViewDto[] getAllUsersExceptMe(String username);
 }

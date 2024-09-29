@@ -1,35 +1,54 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Image, ScrollView, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, Keyboard } from 'react-native';
+import axios from 'axios';
+
 
 const DirectMessage = ({ route }) => {
-  const { contactName, username } = route.params; // Destructure username from route.params
+  // const messagesData = [
+  //   {
+  //     id: 1,
+  //     sender: 'idk',
+  //     text: 'Nu te supara, ai zis ca vrei sa ti dau bujia.',
+  //     time: 'mon, 7:24',
+  //     senderAvatar: 'https://via.placeholder.com/20',
+  //   },
+  //   {
+  //     id: 2,
+  //     sender: 'Janos Varga',
+  //     text: 'N-am dc sa ma supar, numa cred ca esti tepar.',
+  //     time: 'tue, 9:42',
+  //     senderAvatar: 'https://via.placeholder.com/20',
+  //   },
+  //   {
+  //     id: 3,
+  //     sender: 'idk',
+  //     text: 'Am produse vandute la mai multa lume, nu doar tie. Uita-te la rating pe profil. Hai noroc si trai bun familiei. 👌👍👍',
+  //     time: 'wed, 14:42',
+  //     senderAvatar: 'https://via.placeholder.com/20',
+  //   },
+  // ];
+
+  const [messagesData, setMessagesData] = useState(null);
+
+  const { contactName, username } = route.params;  
 
   const [keyboardVisible, setKeyboardVisible] = useState(false);
 
-  // Define messagesData with the username after it has been passed via route
-  const messagesData = [
-    {
-      id: 1,
-      sender: username,
-      text: 'Nu te supara, ai zis ca vrei sa ti dau bujia.',
-      time: 'mon, 7:24',
-      senderAvatar: 'https://via.placeholder.com/20',
-    },
-    {
-      id: 2,
-      sender: 'Janos Varga',
-      text: 'N-am dc sa ma supar, numa cred ca esti tepar.',
-      time: 'tue, 9:42',
-      senderAvatar: 'https://via.placeholder.com/20',
-    },
-    {
-      id: 3,
-      sender: username,
-      text: 'Am produse vandute la mai multa lume, nu doar tie. Uita-te la rating pe profil. Hai noroc si trai bun familiei. 👌👍👍',
-      time: 'wed, 14:42',
-      senderAvatar: 'https://via.placeholder.com/20',
-    },
-  ];
+  const [message, setMessage] = useState("");
+
+  const renderMessages = () => {
+    axios.get("http://localhost:8082/messages/conversation?sender="+contactName+"&receiver="+username)
+    .then(response => {
+      if (Array.isArray(response.data)) {
+        setMessagesData(response.data);
+      } else {
+        console.error("Expected an array, but got something else:", response.data);
+      }
+    })
+    .catch(error => {
+      console.error("Error fetching firms:", error);
+    });
+  }
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
@@ -44,12 +63,33 @@ const DirectMessage = ({ route }) => {
         setKeyboardVisible(false); 
       }
     );
-
+    renderMessages();
     return () => {
       keyboardDidHideListener.remove();
       keyboardDidShowListener.remove();
     };
   }, []);
+
+
+  
+
+  useEffect(() => {
+   
+  },[])
+
+  const sendMessage = () => {
+    axios.post('http://localhost:8082/messages', {
+      senderUsername: username,
+      receiverUsername: contactName,
+      message: message
+    })
+    .then(response => {
+      setMessage("");
+    })
+    .catch(error => {
+      console.log(error);
+    });
+  }
 
  return (
   <KeyboardAvoidingView
@@ -62,8 +102,10 @@ const DirectMessage = ({ route }) => {
         <Image source={{ uri: 'https://via.placeholder.com/50' }} style={styles.avatar} />
       </View>
 
+      {messagesData == null ? <Text>"Loading..."</Text> : 
       <ScrollView contentContainerStyle={styles.messagesContainer}>
-        {messagesData.map((message, index) => (
+        {
+        messagesData.map((message, index) => (
           <View 
             key={index} 
             style={[
@@ -79,14 +121,17 @@ const DirectMessage = ({ route }) => {
           </View>
         ))}
       </ScrollView>
+      }
 
       <View style={[styles.inputContainer]}>
         <TextInput
           style={styles.input}
           placeholder="Write your message"
           placeholderTextColor="#888"
+          value={message}
+          onChangeText={setMessage}
         />
-        <TouchableOpacity style={styles.sendButton}>
+        <TouchableOpacity style={styles.sendButton} onPress={sendMessage}>
           <Text style={styles.sendText}>➤</Text>
         </TouchableOpacity>
       </View>
@@ -136,14 +181,14 @@ const styles = StyleSheet.create({
     maxWidth: '80%',
   },
   contactMessage: {
-    alignSelf: 'flex-end', 
+    alignSelf: 'flex-start', 
     backgroundColor: '#dfe7ed',
-    marginLeft: 'auto',
+    marginRight: 'auto',
   },
   userMessage: {
-    alignSelf: 'flex-start',
+    alignSelf: 'flex-end',
     backgroundColor: '#c6dae0',
-    marginRight: 'auto',
+    marginLeft: 'auto',
   },
   bubbleAvatar: {
     width: 40,
