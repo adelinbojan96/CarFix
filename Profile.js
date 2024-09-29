@@ -273,7 +273,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 1, //should be 20
+    marginBottom: 20,
     backgroundColor: '#a6b2b9', 
     padding: 20, 
     borderRadius: 10,
@@ -310,7 +310,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderWidth: 1,
     borderColor: '#000',
-    marginBottom: 20, //should be 40
+    marginBottom: 40,
   },
   inputGroup: {
     marginBottom: 15,
@@ -332,7 +332,7 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 20,
     alignItems: 'center',
-    marginTop: 1, //should be 20
+    marginTop: 20,
     borderWidth: 1,
     borderColor: '#000',
   },

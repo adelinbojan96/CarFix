@@ -6,6 +6,7 @@ import bujii.be.domain.model.Firm;
 import bujii.be.domain.model.User;
 
 public interface ProductDao {
-    ProductViewDto[] getAllProducts();
     void addProduct(User user, Firm firm, ProductCreateDto product);
+    ProductViewDto[] getProductsByName(String text);
+    ProductViewDto[] getProductsByCategory(String text);
 }

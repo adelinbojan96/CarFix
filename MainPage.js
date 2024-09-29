@@ -10,7 +10,6 @@ const MainPage = ({ navigation, route }) => {
   const [searchExpanded, setSearchExpanded] = useState(false); 
   const [searchText, setSearchText] = useState('');
   const [searchBarColor, setSearchBarColor] = useState('#a6b2b9');
-  const [isFocused, setIsFocused] = useState(false);
 
   useEffect(() => {
     axios.get(`http://localhost:8082/users/profile-image?username=${username}`)
@@ -117,7 +116,7 @@ const MainPage = ({ navigation, route }) => {
 
   const handleSearchSubmit = () => {
     if (searchText.trim()) {
-      navigation.navigate('SearchPage', { searchText });
+      navigation.navigate('SearchPage', { username, criteria: 'Search', searchText });
     }
     toggleSearchBar();
   };
@@ -141,7 +140,7 @@ const MainPage = ({ navigation, route }) => {
                   <TouchableOpacity 
                     key={index} 
                     style={styles.brandBox} 
-                    onPress={() => navigation.navigate('SearchPage')}>
+                    onPress={() => navigation.navigate('SearchPage', { username, criteria: 'Category', searchText: element.name })}>
                     <Image 
                       source={{ uri: base64Image }} 
                       style={styles.brandImage}
