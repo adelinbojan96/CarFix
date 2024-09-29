@@ -1,6 +1,7 @@
 package bujii.be.domain.dao;
 
 import bujii.be.domain.dto.UserCreateDto;
+import bujii.be.domain.dto.UserViewDto;
 import bujii.be.domain.model.User;
 
 public interface UserDao {
@@ -13,4 +14,6 @@ public interface UserDao {
     void saveProfileImage(User user, byte[] image);
 
     void becomeSeller(User user);
+
+    UserViewDto[] getAllUsersExceptMe(String username);
 }
