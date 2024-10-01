@@ -10,7 +10,7 @@ export default function LoginScreen({ navigation }) {
   const [password, setPassword] = useState('');
 
 const handleLogin = () => {
-  axios.post('http://localhost:8082/users/login', {
+  axios.post('https://unknown-charil-g3z4-dc070d62.koyeb.app/users/login', {
     username: username,
     password: password,
   })

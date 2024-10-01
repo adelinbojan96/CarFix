@@ -12,7 +12,7 @@ const MainPage = ({ navigation, route }) => {
   const [searchBarColor, setSearchBarColor] = useState('#a6b2b9');
 
   useEffect(() => {
-    axios.get(`http://localhost:8082/users/profile-image?username=${username}`)
+    axios.get(`https://unknown-charil-g3z4-dc070d62.koyeb.app/users/profile-image?username=${username}`)
       .then(response => {
         const base64Image = response.data;
         if (base64Image) {
@@ -76,7 +76,7 @@ const MainPage = ({ navigation, route }) => {
   const [firms, setFirms] = useState(null);
 
   const renderFirms = () => {
-    axios.get("http://localhost:8082/api/brands")
+    axios.get("https://unknown-charil-g3z4-dc070d62.koyeb.app/api/brands")
       .then(response => {
         if (Array.isArray(response.data)) {
           setFirms(response.data);
@@ -106,7 +106,7 @@ const MainPage = ({ navigation, route }) => {
       setSearchExpanded(true); 
       setSearchBarColor('white');
       Animated.timing(searchBarWidth, {
-        toValue: 250,
+        toValue: 200,
         duration: 300,
         easing: Easing.linear,
         useNativeDriver: false

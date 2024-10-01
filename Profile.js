@@ -18,7 +18,7 @@ const Profile = ({ route, navigation }) => {
   const [newProfileImageFile, setNewProfileImageFile] = useState(null); //for web
 
   useEffect(() => {
-    axios.get(`http://localhost:8082/users/profile-image?username=${formerUsername}`)
+    axios.get(`https://unknown-charil-g3z4-dc070d62.koyeb.app/users/profile-image?username=${formerUsername}`)
       .then(response => {
         const base64Image = response.data; 
         if (base64Image) {
@@ -52,7 +52,7 @@ const Profile = ({ route, navigation }) => {
       }
 
       await axios.post(
-        `http://localhost:8082/users/upload-profile-image?username=${encodeURIComponent(username)}`,
+        `https://unknown-charil-g3z4-dc070d62.koyeb.app/users/upload-profile-image?username=${encodeURIComponent(username)}`,
         formData,
         {
           headers: {
@@ -139,7 +139,7 @@ const Profile = ({ route, navigation }) => {
     };
 
     try {
-      await axios.post(`http://localhost:8082/users/profile?formerUsername=${formerUsername}`, profileData);
+      await axios.post(`https://unknown-charil-g3z4-dc070d62.koyeb.app/users/profile?formerUsername=${formerUsername}`, profileData);
       console.log('Profile updated successfully');
 
       // Upload image only if a new one was selected
@@ -162,7 +162,7 @@ const Profile = ({ route, navigation }) => {
   const handleBecomeSeller = async() =>
   {
       try {
-      await axios.post(`http://localhost:8082/users/seller?username=${formerUsername}`);
+      await axios.post(`https://unknown-charil-g3z4-dc070d62.koyeb.app/users/seller?username=${formerUsername}`);
       console.log('User has become a seller');
       alert('You just have become a seller');
     } catch (error) {

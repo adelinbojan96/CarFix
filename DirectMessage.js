@@ -2,9 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Image, ScrollView, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, Keyboard } from 'react-native';
 import axios from 'axios';
 
-
 const DirectMessage = ({ route }) => {
-
   const [messagesData, setMessagesData] = useState(null);
   const { contactName, username } = route.params;  
   const [keyboardVisible, setKeyboardVisible] = useState(false);
@@ -12,7 +10,7 @@ const DirectMessage = ({ route }) => {
   const [profileImageUri, setProfileImageUri] = useState(null);
 
   const renderMessages = () => {
-    axios.get("http://localhost:8082/messages/conversation?sender="+contactName+"&receiver="+username)
+    axios.get("https://unknown-charil-g3z4-dc070d62.koyeb.app/messages/conversation?sender=" + contactName + "&receiver=" + username)
     .then(response => {
       if (Array.isArray(response.data)) {
         setMessagesData(response.data);
@@ -23,7 +21,7 @@ const DirectMessage = ({ route }) => {
     .catch(error => {
       console.error("Error fetching firms:", error);
     });
-  }
+  };
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
@@ -45,9 +43,8 @@ const DirectMessage = ({ route }) => {
     };
   }, []);
 
-
   const sendMessage = () => {
-    axios.post('http://localhost:8082/messages', {
+    axios.post('https://unknown-charil-g3z4-dc070d62.koyeb.app/messages', {
       senderUsername: username,
       receiverUsername: contactName,
       message: message
@@ -58,13 +55,13 @@ const DirectMessage = ({ route }) => {
     .catch(error => {
       console.log(error);
     });
-  }
-    useEffect(() => {
-    axios.get(`http://localhost:8082/users/profile-image?username=${contactName}`)
+  };
+
+  useEffect(() => {
+    axios.get(`https://unknown-charil-g3z4-dc070d62.koyeb.app/users/profile-image?username=${contactName}`)
       .then(response => {
         const base64Image = response.data; 
         if (base64Image) {
-          //construct the data URI
           const imageUri = `data:image/png;base64,${base64Image}`;
           setProfileImageUri({ uri: imageUri });
         }
@@ -73,53 +70,64 @@ const DirectMessage = ({ route }) => {
         console.error('Error fetching profile image:', error);
       });
   }, [contactName]);
- return (
-  <KeyboardAvoidingView
-    style={{ flex: 1 }}
-    behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-  >
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerText}>{contactName}</Text>
-        <Image source={profileImageUri} style={styles.avatar} />
-      </View>
 
-      {messagesData == null ? <Text>"Loading..."</Text> : 
-      <ScrollView contentContainerStyle={styles.messagesContainer}>
-        {
-        messagesData.map((message, index) => (
-          <View 
-            key={index} 
-            style={[
-              styles.messageBubble, 
-              message.sender === username ? styles.userMessage : styles.contactMessage
-            ]}
-          >
-            <Image source={{ uri: message.senderAvatar }} style={styles.bubbleAvatar} />
-            <View style={styles.bubbleContent}>
-              <Text style={styles.messageText}>{message.text}</Text>
-              <Text style={styles.messageTime}>{message.time}</Text>
+  // Format date function
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); 
+    const year = String(date.getFullYear()).slice(-2); 
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return `${day}/${month}/${year} ${hours}:${minutes}`;
+  };
+
+  return (
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+    >
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <Text style={styles.headerText}>{contactName}</Text>
+          <Image source={profileImageUri} style={styles.avatar} />
+        </View>
+
+        {messagesData == null ? <Text>"Loading..."</Text> : 
+        <ScrollView contentContainerStyle={styles.messagesContainer}>
+          {messagesData.map((message, index) => (
+            <View 
+              key={index} 
+              style={[
+                styles.messageBubble, 
+                message.sender === username ? styles.userMessage : styles.contactMessage
+              ]}
+            >
+              <Image source={{ uri: message.senderAvatar }} style={styles.bubbleAvatar} />
+              <View style={styles.bubbleContent}>
+                <Text style={styles.messageText}>{message.text}</Text>
+                <Text style={styles.messageTime}>{formatDate(message.time)}</Text>
+              </View>
             </View>
-          </View>
-        ))}
-      </ScrollView>
-      }
+          ))}
+        </ScrollView>
+        }
 
-      <View style={[styles.inputContainer]}>
-        <TextInput
-          style={styles.input}
-          placeholder="Write your message"
-          placeholderTextColor="#888"
-          value={message}
-          onChangeText={setMessage}
-        />
-        <TouchableOpacity style={styles.sendButton} onPress={sendMessage}>
-          <Text style={styles.sendText}>➤</Text>
-        </TouchableOpacity>
+        <View style={[styles.inputContainer]}>
+          <TextInput
+            style={styles.input}
+            placeholder="Write your message"
+            placeholderTextColor="#888"
+            value={message}
+            onChangeText={setMessage}
+          />
+          <TouchableOpacity style={styles.sendButton} onPress={sendMessage}>
+            <Text style={styles.sendText}>➤</Text>
+          </TouchableOpacity>
+        </View>
       </View>
-    </View>
-  </KeyboardAvoidingView>
-);
+    </KeyboardAvoidingView>
+  );
 };
 
 const styles = StyleSheet.create({

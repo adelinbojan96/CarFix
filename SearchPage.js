@@ -27,11 +27,11 @@ const SearchPage = ({ route }) => {
         setLoading(true);
         let response;
         if (criteria === 'Category') {
-          response = await axios.get(`http://localhost:8082/api/products/retrieveCategory`, {
+          response = await axios.get(`https://unknown-charil-g3z4-dc070d62.koyeb.app/api/products/retrieveCategory`, {
             params: { text: searchText}, 
           });
         } else if (criteria === 'Search') {
-          response = await axios.get(`http://localhost:8082/api/products/retrieveName`, {
+          response = await axios.get(`https://unknown-charil-g3z4-dc070d62.koyeb.app/api/products/retrieveName`, {
             params: { text: searchText }, 
           });
         }

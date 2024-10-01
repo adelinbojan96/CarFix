@@ -4,28 +4,10 @@ import axios from 'axios';
 
 const Messages = ({ navigation, route }) => {
   const { username } = route.params; 
-
-  // const contactsData = [
-  //   {
-  //     id: 1,
-  //     name: 'Janos Varga',
-  //     role: 'Buyer',
-  //     messages: 1,
-  //     avatar: 'https://via.placeholder.com/60', 
-  //   },
-  //   {
-  //     id: 2,
-  //     name: 'Cosmin Tișe',
-  //     role: 'Seller',
-  //     messages: 5,
-  //     avatar: 'https://via.placeholder.com/60',
-  //   },
-  // ];
-  
   const [contactsData,setContactsData] = useState(null);
 
   const renderContacts = () => {
-    axios.get("http://localhost:8082/users/"+username)
+    axios.get("https://unknown-charil-g3z4-dc070d62.koyeb.app/users/"+username)
     .then(response => {
       if (Array.isArray(response.data)) {
         setContactsData(response.data);
@@ -70,9 +52,6 @@ const Messages = ({ navigation, route }) => {
               <Text style={styles.messageCount}>
                 {contact.messages} {contact.messages === 1 ? 'message' : 'messages'}
               </Text>
-              <TouchableOpacity>
-                <Text style={styles.deleteText}>Delete</Text>
-              </TouchableOpacity>
             </View>
           </TouchableOpacity>
         ))}
@@ -145,10 +124,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#7897a3', 
     marginBottom: 5,
-  },
-  deleteText: {
-    fontSize: 14,
-    color: 'red', 
   },
 });
 
